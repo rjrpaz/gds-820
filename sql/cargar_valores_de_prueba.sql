@@ -1,0 +1,20 @@
+use gds820;
+
+DELETE FROM Usuario;
+INSERT INTO Usuario VALUES (1,'username','juan');
+INSERT INTO Usuario VALUES (1,'password',MD5('juan'));
+INSERT INTO Usuario VALUES (1,'show_vmax','1');
+INSERT INTO Usuario VALUES (1,'show_vmin','1');
+INSERT INTO Usuario VALUES (1,'show_vpp','1');
+INSERT INTO Usuario VALUES (1,'show_vhi','1');
+INSERT INTO Usuario VALUES (1,'show_vlo','1');
+INSERT INTO Usuario VALUES (1,'show_vamp','1');
+INSERT INTO Usuario VALUES (1,'show_vavg','1');
+INSERT INTO Usuario VALUES (1,'show_vrms','1');
+INSERT INTO Usuario VALUES (1,'show_freq','1');
+INSERT INTO Usuario VALUES (1,'show_period','1');
+INSERT INTO Usuario VALUES (1,'show_rise','1');
+INSERT INTO Usuario VALUES (1,'show_fall','1');
+INSERT INTO Usuario VALUES (1,'show_pwidth','1');
+INSERT INTO Usuario VALUES (1,'show_nwidth','1');
+INSERT INTO Usuario VALUES (1,'show_pduty','1');

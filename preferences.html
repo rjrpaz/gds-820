@@ -1,0 +1,140 @@
+#!/usr/bin/perl -w
+
+use gds820;
+use strict;
+use CGI qw(:standard escapeHTML);
+use CGI::Cookie;
+use HTML::Template;
+
+my @registro = ();
+
+my %cookies = fetch CGI::Cookie;
+my %config = ();
+
+my $tmpldir = &config('path_template');
+my $template = HTML::Template->new(filename => 'header.tmpl', path => $tmpldir);
+
+my $titulo = &config('titulo_principal');
+$template->param(titulo => $titulo);
+my $color_de_fondo = &config('color_de_fondo');
+$template->param(color_de_fondo => $color_de_fondo);
+
+my $url1 = $ENV{'SERVER_NAME'}.$ENV{'SCRIPT_NAME'};
+#my $url1 = '';
+my $url2 = $ENV{'SERVER_NAME'}."/gds820/cgi-bin/index.html";
+#my $url2 = '';
+my $http_referer = $ENV{'HTTP_REFERER'};
+
+print STDERR "REF: $http_referer \n";
+print STDERR "URL1: $url1 \n";
+print STDERR "URL2: $url2 \n";
+
+#if (!defined($http_referer))
+#{
+##	$http_referer = $ENV{'SERVER_NAME'}.$ENV{'SCRIPT_NAME'};
+#	;
+#}
+#else
+#{
+#	if ($http_referer eq "")
+#	{
+#		$http_referer = $cookies{'http_referer'}->value;
+#	}
+#}
+
+if ((defined($http_referer)) && (($http_referer =~ m/$url1/) || ($http_referer =~ m/$url2/)))
+{
+	# Obtiene usuario y contraseña
+	my $usuario = $cookies{'usuario'}->value if (defined($cookies{'usuario'}));
+	my $password = $cookies{'password'}->value if (defined($cookies{'password'}));
+
+#	print STDERR "USUARIO: $usuario \n";
+#	print STDERR "PASSWORD: $password \n";
+
+	# Chequea validez de usuario y contraseña
+	if (!(&chequeo_crypt_password($usuario, $password)))
+	{
+		&return_error("Error", "Usuario o Password incorrecta", "", "1270");
+	}
+
+	# Si el referer de la pagina es ella misma, recuperar
+	# la informacion del formulario.
+	if ($http_referer =~ m/$url1/)
+	{
+		%config = get_config($usuario);
+		if (defined(param('show')))
+		{
+			my @arr = param('show');
+
+			# Primero inicializo a 0 todos los "show".
+			foreach my $key (keys %config)
+			{
+				next if ($key !~ /show_/);
+				set_config($usuario, $key, "0");
+			}
+
+			# Luego pongo en 1 los que quedaron seleccionados. 
+			foreach my $arr (@arr)
+			{
+				set_config($usuario, $arr, "1");
+			}
+		}
+	}
+
+	%config = get_config($usuario);
+
+#	foreach my $key (keys %config)
+#	{
+#		print STDERR "A: $key V: $config{$key} \n";
+#	}
+
+	# Imprime cabecera de pagina HTML
+	print header();
+	print $template->output;
+
+	$template = HTML::Template->new(filename => 'preferences.tmpl', path => $tmpldir);
+
+
+
+
+  ############
+  ### show ###
+  ############
+  @registro = ();
+  foreach my $key (keys %config)
+  {
+		next if ($key !~ /show_/);
+    my %row;
+    my $show_opcion_elegida = 0;
+
+    $show_opcion_elegida = 1 if ($config{$key} == 1);
+
+    $row{show_opcion_elegida} = $show_opcion_elegida;
+    $row{show_key} = $key;
+		(my $mostrar) = ($key =~ /show_(.*)/);
+    $row{show} = $mostrar;
+    push(@registro, \%row);
+  }
+  $template->param(show_loop => \@registro);
+
+
+
+
+
+
+	print $template->output;
+}
+else
+{
+	 &return_error("Error", "No puede ingresar directamente a la pagina.", "", "666");
+}
+
+$template = HTML::Template->new(filename => 'footer.tmpl', path => $tmpldir);
+
+my $usar_link_pagina_principal = 0;
+$template->param(usar_link_pagina_principal => $usar_link_pagina_principal);
+
+print $template->output;
+
+exit(0);
+

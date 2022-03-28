@@ -1,0 +1,9 @@
+* Algunos comandos generan una respuesta por parte del osciloscopio, y otros no.
+Habria que analizar la forma en que, en el caso de que no haya una respuesta,
+no se genere el fork.
+
+* La lectura del puerto serie, debe realizarse con "read" y no con "<DEV>", ya
+que en muchos casos los caracteres devueltos no son legibles, por lo que
+recibir una cadena hasta un LF o CR, no es una opcion.
+
+

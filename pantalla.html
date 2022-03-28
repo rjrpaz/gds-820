@@ -1,0 +1,49 @@
+#!/usr/bin/perl -w
+
+use gds820;
+use strict;
+use CGI qw(:standard escapeHTML);
+use CGI::Cookie;
+use HTML::Template;
+
+my $tmpldir = &config('path_template');
+my $template = HTML::Template->new(filename => 'header.tmpl', path => $tmpldir);
+
+my $titulo = &config('titulo_principal');
+$template->param(titulo => $titulo);
+my $color_de_fondo = &config('color_de_fondo');
+$template->param(color_de_fondo => $color_de_fondo);
+
+my $url = "http://".$ENV{'SERVER_NAME'}."/gds820/cgi-bin/index.html";
+my $http_referer = $ENV{'HTTP_REFERER'};
+
+my %cookies = fetch CGI::Cookie;
+
+if ((defined($http_referer)) && ($http_referer =~ m/$url/))
+{
+	my $usuario = $cookies{'usuario'}->value;
+	my $password = $cookies{'password'}->value;
+
+	if (!(&chequeo_crypt_password($usuario, $password)))
+	{
+		&return_error("Error", "Usuario o Password incorrecta", "", "1270");
+	}
+
+	print header();
+	print $template->output;
+
+	$template = HTML::Template->new(filename=>'pantalla.tmpl', path=>$tmpldir);
+	my $datafile = &generar_imagen();
+	$template->param(imgfile => $datafile);
+	print $template->output;
+}
+
+$template = HTML::Template->new(filename => 'footer.tmpl', path => $tmpldir);
+
+my $usar_link_pagina_principal = 0;
+$template->param(usar_link_pagina_principal => $usar_link_pagina_principal);
+
+print $template->output;
+
+exit;
+

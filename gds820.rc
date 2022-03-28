@@ -1,0 +1,33 @@
+#!/bin/sh -e
+#
+#   /etc/init.d/comd: este servicio arranca el servidor TCP que se comunica con el osciloscopio.
+#
+DAEMON=gds820d
+
+[ -x /usr/sbin/comd ] || exit 0
+
+case "$1" in
+start)
+    echo -n "Starting GDS-820c communication server: $DAEMON"
+    /usr/sbin/$DAEMON
+    echo "."
+    ;;
+stop)
+    echo -n "Shutting down GDS-820c communication server: $DAEMON"
+    killall $DAEMON
+    echo "."
+    ;;
+restart|force-reload)
+    echo -n "Restarting GDS-820c communication server: $DAEMON"
+    $0 stop
+    echo "."
+    $0 start
+    echo "."
+    ;;
+*)
+    echo "Usage: /etc/init.d/$0 {start|stop|restart|force-reload}"
+    exit 1
+    ;;
+esac
+
+exit 0

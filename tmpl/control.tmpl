@@ -1,0 +1,994 @@
+  <form name="index.html">
+   <br>
+
+<!-- Starting General Table -->
+   <table border="1">
+
+    <tr valign="center">
+     <td align="left" valign="center" colspan="2">
+
+<!-- Starting "Show" Table -->
+
+   <table>
+
+    <tr valign="center">
+     <td align="left" valign="center" colspan="6">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="2" color=black>
+       <b>
+        Show:
+       </b>
+      </font>
+     </td>
+    </tr>
+
+    <tr valign="center">
+    <TMPL_LOOP NAME="show_loop">
+     <td align="center" valign="center">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="1" color=black>
+       <TMPL_IF NAME="show_opcion_elegida">
+       <input type=checkbox name="show" value="<TMPL_VAR NAME="show_key">" onClick="goThere(this.form, 'show')" checked>&nbsp;<TMPL_VAR NAME="show">
+       <TMPL_ELSE>
+       <input type=checkbox name="show" value="<TMPL_VAR NAME="show_key">" onClick="goThere(this.form, 'show')">&nbsp;<TMPL_VAR NAME="show">
+       </TMPL_IF>
+      </font>
+     </td>
+     <td align="center" valign="center" width="20">
+      &nbsp;
+     </td>
+     </TMPL_LOOP>
+
+     <td align="center" valign="center">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="1" color=black>
+       <input type="button" value="  Save Graph  " onClick="window.location.href='save.html'">
+      </font>
+     </td>
+     <td align="center" valign="center" width="20">
+      &nbsp;
+     </td>
+
+     <td align="center" valign="center">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="1" color=black>
+       <input type="button" value="  Load Graph  " onClick="window.location.href='load.html'">
+      </font>
+     </td>
+     <td align="center" valign="center" width="20">
+      &nbsp;
+     </td>
+
+     <td align="center" valign="center">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="1" color=black>
+       <input type="button" value="  Preferences  " onClick="window.location.href='preferences.html'">
+      </font>
+     </td>
+     <td align="center" valign="center" width="20">
+      &nbsp;
+     </td>
+
+    </tr>
+
+   </table>
+
+<!-- Ending "Show" Table -->
+
+     </td>
+    </tr>
+
+    <tr valign="center">
+     <td align="center" valign="center">
+      <a href="index.html">
+       <img src="<TMPL_VAR NAME="imgfile">" ismap>
+      </a>
+     </td>
+     <td align="center" valign="center">
+
+      <TMPL_IF NAME="mostrar_cursors">
+<!-- Starting Cursor Table -->
+   <table>
+    <tr valign="center">
+     <td align="center" valign="center" colspan="2">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="2" color=black>
+       <b>
+        &nbsp; &nbsp; CURSOR &nbsp; &nbsp;
+       </b>
+      </font>
+     </td>
+    </tr>
+
+    <tr>
+     <td colspan="2">
+       &nbsp;
+     </td>
+    </tr>
+
+    <tr valign="center">
+     <td rowspan="3" align="left" valign="center">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="2" color=black>
+       <b>
+        Source
+       </b>
+      </font>
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="1" color=black>
+       <TMPL_LOOP NAME="cursor_source_loop">
+       <br>
+       <TMPL_IF NAME="cursor_source_opcion_elegida">
+       <input type="radio" name="cursor_source" value="<TMPL_VAR NAME="cursor_source_key">" onClick="goThere(this.form, 'cursor_source')" checked><TMPL_VAR NAME="cursor_source">
+       <TMPL_ELSE>
+       <input type="radio" name="cursor_source" value="<TMPL_VAR NAME="cursor_source_key">" onClick="goThere(this.form, 'cursor_source')"><TMPL_VAR NAME="cursor_source">
+       </TMPL_IF>
+       </TMPL_LOOP>
+      </font>
+     </td>
+
+     <td align="left" valign="center">
+      <b>
+       <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="2" color=black>
+        Modify cursor
+       </font>
+       <br>
+       <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="1" color=black>
+        (select cursor and then
+        <br>
+        click on image)
+       </font>
+      </b>
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="1" color=black>
+       <TMPL_LOOP NAME="modify_cursor_loop">
+       <br>
+       <TMPL_IF NAME="modify_cursor_opcion_elegida">
+       <input type="radio" name="modify_cursor" value="<TMPL_VAR NAME="modify_cursor_key">" onClick="goThere(this.form, 'modify_cursor')" checked><TMPL_VAR NAME="modify_cursor">
+       <TMPL_ELSE>
+       <input type="radio" name="modify_cursor" value="<TMPL_VAR NAME="modify_cursor_key">" onClick="goThere(this.form, 'modify_cursor')"><TMPL_VAR NAME="modify_cursor">
+       </TMPL_IF>
+       </TMPL_LOOP>
+      </font>
+     </td>
+    </tr>
+
+   </table>
+<!-- Ending Cursor Table -->
+
+
+   <br>
+
+
+<!-- Starting Cursor Summary Table -->
+
+
+   <table>
+    <tr valign="center">
+     <td align="left" valign="center">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="1" color=black>
+       <TMPL_IF NAME="source_es_math">
+       &nbsp; <b>f1</b>=<TMPL_VAR NAME="cursor_x1position"> &nbsp;
+       <TMPL_ELSE>
+       &nbsp; <b>T1</b>=<TMPL_VAR NAME="cursor_x1position"> &nbsp;
+       </TMPL_IF>
+      </font>
+     </td>
+     <td align="left" valign="center">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="1" color=black>
+       <TMPL_IF NAME="source_es_math">
+       &nbsp; <b>f2</b>=<TMPL_VAR NAME="cursor_x2position"> &nbsp;
+       <TMPL_ELSE>
+       &nbsp; <b>T2</b>=<TMPL_VAR NAME="cursor_x2position"> &nbsp;
+       </TMPL_IF>
+      </font>
+     </td>
+     <td align="left" valign="center">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="1" color=black>
+
+       &nbsp; <b>&#916;</b>=<TMPL_VAR NAME="cursor_xdelta"> &nbsp;
+
+      </font>
+     </td>
+    </tr>
+
+    <tr valign="center">
+     <td align="left" valign="center">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="1" color=black>
+       <TMPL_IF NAME="source_es_math">
+       &nbsp; <b>M1</b>=<TMPL_VAR NAME="cursor_y1position"> &nbsp;
+       <TMPL_ELSE>
+       &nbsp; <b>V1</b>=<TMPL_VAR NAME="cursor_y1position"> &nbsp;
+       </TMPL_IF>
+      </font>
+     </td>
+     <td align="left" valign="center">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="1" color=black>
+       <TMPL_IF NAME="source_es_math">
+       &nbsp; <b>M2</b>=<TMPL_VAR NAME="cursor_y2position"> &nbsp;
+       <TMPL_ELSE>
+       &nbsp; <b>V2</b>=<TMPL_VAR NAME="cursor_y2position"> &nbsp;
+       </TMPL_IF>
+      </font>
+     </td>
+     <td align="left" valign="center">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="1" color=black>
+
+       &nbsp; <b>&#916;</b>=<TMPL_VAR NAME="cursor_ydelta"> &nbsp;
+
+      </font>
+     </td>
+    </tr>
+   </table>
+
+<!-- Ending Cursor Summary Table -->
+      <TMPL_ELSE>
+			 &nbsp;
+			</TMPL_IF>
+
+
+     </td>
+    </tr>
+
+    <tr valign="center">
+     <td align="center" valign="center" colspan="2">
+
+<!-- Starting Summary Table -->
+   <table>
+	  <TMPL_IF NAME="mostrar_channel_1">
+    <tr valign="center">
+     <td align="left" valign="center" rowspan="3">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="2" color=black>
+       <b>
+        Channel 1
+       </b>
+      </font>
+     </td>
+     <td align="center" valign="center">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="1" color=black>
+       <TMPL_IF NAME="show_vmax">
+       &nbsp; <b>Vmax</b>=<TMPL_VAR NAME="measure_vmax_1"> &nbsp;
+       <TMPL_ELSE>
+       &nbsp; Vmax=<i>Not selected</i> &nbsp;
+       </TMPL_IF>
+      </font>
+     </td>
+     <td align="center" valign="center">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="1" color=black>
+       <TMPL_IF NAME="show_vmin">
+       &nbsp; <b>Vmin</b>=<TMPL_VAR NAME="measure_vmin_1"> &nbsp;
+       <TMPL_ELSE>
+       &nbsp; Vmin=<i>Not selected</i> &nbsp;
+       </TMPL_IF>
+      </font>
+     </td>
+     <td align="center" valign="center">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="1" color=black>
+       <TMPL_IF NAME="show_vpp">
+       &nbsp; <b>Vpp</b>=<TMPL_VAR NAME="measure_vpp_1"> &nbsp;
+       <TMPL_ELSE>
+       &nbsp; Vpp=<i>Not selected</i> &nbsp;
+       </TMPL_IF>
+      </font>
+     </td>
+     <td align="center" valign="center">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="1" color=black>
+       <TMPL_IF NAME="show_vavg">
+       &nbsp; <b>Vavg</b>=<TMPL_VAR NAME="measure_vavg_1"> &nbsp;
+       <TMPL_ELSE>
+       &nbsp; Vavg=<i>Not selected</i> &nbsp;
+       </TMPL_IF>
+      </font>
+     </td>
+     <td align="center" valign="center">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="1" color=black>
+       <TMPL_IF NAME="show_vrms">
+       &nbsp; <b>Vrms</b>=<TMPL_VAR NAME="measure_vrms_1"> &nbsp;
+       <TMPL_ELSE>
+       &nbsp; Vrms=<i>Not selected</i> &nbsp;
+       </TMPL_IF>
+      </font>
+     </td>
+    </tr>
+
+    <tr valign="center">
+     <td align="center" valign="center">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="1" color=black>
+       <TMPL_IF NAME="show_vhi">
+       &nbsp; <b>Vhi</b>=<TMPL_VAR NAME="measure_vhi_1"> &nbsp;
+       <TMPL_ELSE>
+       &nbsp; Vhi=<i>Not selected</i> &nbsp;
+       </TMPL_IF>
+      </font>
+     </td>
+     <td align="center" valign="center">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="1" color=black>
+       <TMPL_IF NAME="show_vlo">
+       &nbsp; <b>Vlo</b>=<TMPL_VAR NAME="measure_vlo_1"> &nbsp;
+       <TMPL_ELSE>
+       &nbsp; Vlo=<i>Not selected</i> &nbsp;
+       </TMPL_IF>
+      </font>
+     </td>
+     <td align="center" valign="center">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="1" color=black>
+       <TMPL_IF NAME="show_vamp">
+       &nbsp; <b>Vamp</b>=<TMPL_VAR NAME="measure_vamp_1"> &nbsp;
+       <TMPL_ELSE>
+       &nbsp; Vamp=<i>Not selected</i> &nbsp;
+       </TMPL_IF>
+      </font>
+     </td>
+     <td align="center" valign="center">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="1" color=black>
+       <TMPL_IF NAME="show_freq">
+       &nbsp; <b>Freq</b>=<TMPL_VAR NAME="measure_freq_1"> &nbsp;
+       <TMPL_ELSE>
+       &nbsp; Freq=<i>Not selected</i> &nbsp;
+       </TMPL_IF>
+      </font>
+     </td>
+     <td align="center" valign="center">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="1" color=black>
+       <TMPL_IF NAME="show_period">
+       &nbsp; <b>Period</b>=<TMPL_VAR NAME="measure_period_1"> &nbsp;
+       <TMPL_ELSE>
+       &nbsp; Period=<i>Not selected</i> &nbsp;
+       </TMPL_IF>
+      </font>
+     </td>
+    </tr>
+
+    <tr valign="center">
+     <td align="center" valign="center">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="1" color=black>
+       <TMPL_IF NAME="show_rise">
+       &nbsp; <b>Risetime</b>=<TMPL_VAR NAME="measure_rise_1"> &nbsp;
+       <TMPL_ELSE>
+       &nbsp; Risetime=<i>Not selected</i> &nbsp;
+       </TMPL_IF>
+      </font>
+     </td>
+     <td align="center" valign="center">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="1" color=black>
+       <TMPL_IF NAME="show_fall">
+       &nbsp; <b>Falltime</b>=<TMPL_VAR NAME="measure_fall_1"> &nbsp;
+       <TMPL_ELSE>
+       &nbsp; Falltime=<i>Not selected</i> &nbsp;
+       </TMPL_IF>
+      </font>
+     </td>
+     <td align="center" valign="center">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="1" color=black>
+       <TMPL_IF NAME="show_pwidth">
+       &nbsp; <b>+Width</b>=<TMPL_VAR NAME="measure_pwidth_1"> &nbsp;
+       <TMPL_ELSE>
+       &nbsp; +Width=<i>Not selected</i> &nbsp;
+       </TMPL_IF>
+      </font>
+     </td>
+     <td align="center" valign="center">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="1" color=black>
+       <TMPL_IF NAME="show_nwidth">
+       &nbsp; <b>-Width</b>=<TMPL_VAR NAME="measure_nwidth_1"> &nbsp;
+       <TMPL_ELSE>
+       &nbsp; -Width=<i>Not selected</i> &nbsp;
+       </TMPL_IF>
+      </font>
+     </td>
+     <td align="center" valign="center">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="1" color=black>
+       <TMPL_IF NAME="show_pduty">
+       &nbsp; <b>Duty Cycle</b>=<TMPL_VAR NAME="measure_pduty_1"> &nbsp;
+       <TMPL_ELSE>
+       &nbsp; Duty Cycle=<i>Not selected</i> &nbsp;
+       </TMPL_IF>
+      </font>
+     </td>
+    </tr>
+		<!--
+   </table>
+	 -->
+	  </TMPL_IF>
+
+<!-- Ending Summary Table -->
+
+	  <TMPL_IF NAME="mostrar_channel_1">
+	  <TMPL_IF NAME="mostrar_channel_2">
+    <tr valign="center">
+     <td align="left" valign="center" height="10" colspan="6">
+      &nbsp;
+     </td>
+    </tr>
+	  </TMPL_IF>
+	  </TMPL_IF>
+
+<!-- Starting Summary Table -->
+		<!--
+   <table>
+	 -->
+	  <TMPL_IF NAME="mostrar_channel_2">
+    <tr valign="center">
+     <td align="left" valign="center" rowspan="3">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="2" color=black>
+			 <b>
+        Channel 2
+			 </b>
+      </font>
+     </td>
+     <td align="center" valign="center">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="1" color=black>
+       <TMPL_IF NAME="show_vmax">
+       &nbsp; <b>Vmax</b>=<TMPL_VAR NAME="measure_vmax_2"> &nbsp;
+       <TMPL_ELSE>
+       &nbsp; Vmax=<i>Not selected</i> &nbsp;
+       </TMPL_IF>
+      </font>
+     </td>
+     <td align="center" valign="center">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="1" color=black>
+       <TMPL_IF NAME="show_vmin">
+       &nbsp; <b>Vmin</b>=<TMPL_VAR NAME="measure_vmin_2"> &nbsp;
+       <TMPL_ELSE>
+       &nbsp; Vmin=<i>Not selected</i> &nbsp;
+       </TMPL_IF>
+      </font>
+     </td>
+     <td align="center" valign="center">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="1" color=black>
+       <TMPL_IF NAME="show_vpp">
+       &nbsp; <b>Vpp</b>=<TMPL_VAR NAME="measure_vpp_2"> &nbsp;
+       <TMPL_ELSE>
+       &nbsp; Vpp=<i>Not selected</i> &nbsp;
+       </TMPL_IF>
+      </font>
+     </td>
+     <td align="center" valign="center">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="1" color=black>
+       <TMPL_IF NAME="show_vavg">
+       &nbsp; <b>Vavg</b>=<TMPL_VAR NAME="measure_vavg_2"> &nbsp;
+       <TMPL_ELSE>
+       &nbsp; Vavg=<i>Not selected</i> &nbsp;
+       </TMPL_IF>
+      </font>
+     </td>
+     <td align="center" valign="center">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="1" color=black>
+       <TMPL_IF NAME="show_vrms">
+       &nbsp; <b>Vrms</b>=<TMPL_VAR NAME="measure_vrms_2"> &nbsp;
+       <TMPL_ELSE>
+       &nbsp; Vrms=<i>Not selected</i> &nbsp;
+       </TMPL_IF>
+      </font>
+     </td>
+    </tr>
+
+    <tr valign="center">
+     <td align="center" valign="center">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="1" color=black>
+       <TMPL_IF NAME="show_vhi">
+       &nbsp; <b>Vhi</b>=<TMPL_VAR NAME="measure_vhi_2"> &nbsp;
+       <TMPL_ELSE>
+       &nbsp; Vhi=<i>Not selected</i> &nbsp;
+       </TMPL_IF>
+      </font>
+     </td>
+     <td align="center" valign="center">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="1" color=black>
+       <TMPL_IF NAME="show_vlo">
+       &nbsp; <b>Vlo</b>=<TMPL_VAR NAME="measure_vlo_2"> &nbsp;
+       <TMPL_ELSE>
+       &nbsp; Vlo=<i>Not selected</i> &nbsp;
+       </TMPL_IF>
+      </font>
+     </td>
+     <td align="center" valign="center">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="1" color=black>
+       <TMPL_IF NAME="show_vamp">
+       &nbsp; <b>Vamp</b>=<TMPL_VAR NAME="measure_vamp_2"> &nbsp;
+       <TMPL_ELSE>
+       &nbsp; Vamp=<i>Not selected</i> &nbsp;
+       </TMPL_IF>
+      </font>
+     </td>
+     <td align="center" valign="center">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="1" color=black>
+       <TMPL_IF NAME="show_freq">
+       &nbsp; <b>Freq</b>=<TMPL_VAR NAME="measure_freq_2"> &nbsp;
+       <TMPL_ELSE>
+       &nbsp; Freq=<i>Not selected</i> &nbsp;
+       </TMPL_IF>
+      </font>
+     </td>
+     <td align="center" valign="center">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="1" color=black>
+       <TMPL_IF NAME="show_period">
+       &nbsp; <b>Period</b>=<TMPL_VAR NAME="measure_period_2"> &nbsp;
+       <TMPL_ELSE>
+       &nbsp; Period=<i>Not selected</i> &nbsp;
+       </TMPL_IF>
+      </font>
+     </td>
+    </tr>
+
+    <tr valign="center">
+     <td align="center" valign="center">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="1" color=black>
+       <TMPL_IF NAME="show_rise">
+       &nbsp; <b>Risetime</b>=<TMPL_VAR NAME="measure_rise_2"> &nbsp;
+       <TMPL_ELSE>
+       &nbsp; Risetime=<i>Not selected</i> &nbsp;
+       </TMPL_IF>
+      </font>
+     </td>
+     <td align="center" valign="center">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="1" color=black>
+       <TMPL_IF NAME="show_fall">
+       &nbsp; <b>Falltime</b>=<TMPL_VAR NAME="measure_fall_2"> &nbsp;
+       <TMPL_ELSE>
+       &nbsp; Falltime=<i>Not selected</i> &nbsp;
+       </TMPL_IF>
+      </font>
+     </td>
+     <td align="center" valign="center">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="1" color=black>
+       <TMPL_IF NAME="show_pwidth">
+       &nbsp; <b>+Width</b>=<TMPL_VAR NAME="measure_pwidth_2"> &nbsp;
+       <TMPL_ELSE>
+       &nbsp; +Width=<i>Not selected</i> &nbsp;
+       </TMPL_IF>
+      </font>
+     </td>
+     <td align="center" valign="center">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="1" color=black>
+       <TMPL_IF NAME="show_nwidth">
+       &nbsp; <b>-Width</b>=<TMPL_VAR NAME="measure_nwidth_2"> &nbsp;
+       <TMPL_ELSE>
+       &nbsp; -Width=<i>Not selected</i> &nbsp;
+       </TMPL_IF>
+      </font>
+     </td>
+     <td align="center" valign="center">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="1" color=black>
+       <TMPL_IF NAME="show_pduty">
+       &nbsp; <b>Duty Cycle</b>=<TMPL_VAR NAME="measure_pduty_2"> &nbsp;
+       <TMPL_ELSE>
+       &nbsp; Duty Cycle=<i>Not selected</i> &nbsp;
+       </TMPL_IF>
+      </font>
+     </td>
+    </tr>
+	  </TMPL_IF>
+   </table>
+
+<!-- Ending Summary Table -->
+
+     </td>
+    </tr>
+
+    <tr valign="center">
+     <td align="center" valign="center">
+
+<!-- Starting Vertical Submenu Table -->
+   <table>
+    <tr valign="center">
+     <td colspan="2" align="center" valign="center">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="2" color=black>
+       <b>
+        &nbsp; &nbsp; VERTICAL &nbsp; &nbsp;
+       </b>
+      </font>
+     </td>
+    </tr>
+
+    <tr>
+     <td colspan="2">
+       &nbsp;
+     </td>
+    </tr>
+
+    <tr>
+<!--
+     <td colspan="2">
+-->
+     <td>
+
+<!-- Starting Channel 1 Submenu Table -->
+   <table border="1">
+
+    <tr valign="center">
+     <td colspan="4" align="center" valign="center">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="2" color=black>
+       <b>
+        &nbsp; &nbsp; Channel 1 &nbsp; &nbsp;
+       </b>
+      </font>
+     </td>
+    </tr>
+
+    <tr>
+     <td colspan="4">
+       &nbsp;
+     </td>
+    </tr>
+
+    <tr valign="center">
+     <td rowspan="3" align="left" valign="center">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="2" color=black>
+       <b>
+       Probe
+       </b>
+      </font>
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="1" color=black>
+       <TMPL_LOOP NAME="channel1_probe_loop">
+       <br>
+       <TMPL_IF NAME="channel1_probe_opcion_elegida">
+       <input type="radio" name="channel1_probe" value="<TMPL_VAR NAME="channel1_probe_key">" onClick="goThere(this.form, 'channel1_probe')" checked><TMPL_VAR NAME="channel1_probe">
+       <TMPL_ELSE>
+       <input type="radio" name="channel1_probe" value="<TMPL_VAR NAME="channel1_probe_key">" onClick="goThere(this.form, 'channel1_probe')"><TMPL_VAR NAME="channel1_probe">
+       </TMPL_IF>
+       </TMPL_LOOP>
+      </font>
+     </td>
+
+     <td rowspan="3" align="left" valign="center">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="2" color=black>
+       <b>
+       Coupling
+       </b>
+      </font>
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="1" color=black>
+       <TMPL_LOOP NAME="channel1_coupling_loop">
+       <br>
+       <TMPL_IF NAME="channel1_coupling_opcion_elegida">
+       <input type="radio" name="channel1_coupling" value="<TMPL_VAR NAME="channel1_coupling_key">" onClick="goThere(this.form, 'channel1_coupling')" checked><TMPL_VAR NAME="channel1_coupling">
+       <TMPL_ELSE>
+       <input type="radio" name="channel1_coupling" value="<TMPL_VAR NAME="channel1_coupling_key">" onClick="goThere(this.form, 'channel1_coupling')"><TMPL_VAR NAME="channel1_coupling">
+       </TMPL_IF>
+       </TMPL_LOOP>
+      </font>
+     </td>
+
+     <td align="center" valign="center">
+      <a href="index.html?channel1_offset=<TMPL_VAR NAME="channel1_offset_up">"><img src="/images/up.gif" width="15" height="15"></a>
+     </td>
+     <td rowspan="3" align="center" valign="center">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="1" color=black>
+       <b>
+        &nbsp; POSITION &nbsp; &nbsp;
+       </b>
+      </font>
+     </td>
+    </tr>
+
+    <tr valign="center">
+     <td align="center" valign="center">
+      <font face="Courier, Courier New, Monaco" size="2" color="black">
+       <b>
+        <TMPL_VAR NAME="channel1_offset">
+       </b>
+      </font>
+     </td>
+    </tr>
+
+    <tr valign="center">
+     <td align="center" valign="center">
+      <a href="index.html?channel1_offset=<TMPL_VAR NAME="channel1_offset_down">"><img src="/images/down.gif" width="15" height="15"></a>
+     </td>
+    </tr>
+
+    <tr>
+
+     <td rowspan="3" align="left" valign="center">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="2" color=black>
+       <b>
+       Bw Limit
+       </b>
+      </font>
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="1" color=black>
+       <TMPL_LOOP NAME="channel1_bwlimit_loop">
+       <br>
+       <TMPL_IF NAME="channel1_bwlimit_opcion_elegida">
+       <input type="radio" name="channel1_bwlimit" value="<TMPL_VAR NAME="channel1_bwlimit_key">" onClick="goThere(this.form, 'channel1_bwlimit')" checked><TMPL_VAR NAME="channel1_bwlimit">
+       <TMPL_ELSE>
+       <input type="radio" name="channel1_bwlimit" value="<TMPL_VAR NAME="channel1_bwlimit_key">" onClick="goThere(this.form, 'channel1_bwlimit')"><TMPL_VAR NAME="channel1_bwlimit">
+       </TMPL_IF>
+       </TMPL_LOOP>
+      </font>
+     </td>
+
+     <td rowspan="3" align="left" valign="center">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="2" color=black>
+       <b>
+       Invert
+       </b>
+      </font>
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="1" color=black>
+       <TMPL_LOOP NAME="channel1_invert_loop">
+       <br>
+       <TMPL_IF NAME="channel1_invert_opcion_elegida">
+       <input type="radio" name="channel1_invert" value="<TMPL_VAR NAME="channel1_invert_key">" onClick="goThere(this.form, 'channel1_invert')" checked><TMPL_VAR NAME="channel1_invert">
+       <TMPL_ELSE>
+       <input type="radio" name="channel1_invert" value="<TMPL_VAR NAME="channel1_invert_key">" onClick="goThere(this.form, 'channel1_invert')"><TMPL_VAR NAME="channel1_invert">
+       </TMPL_IF>
+       </TMPL_LOOP>
+      </font>
+     </td>
+
+     <td colspan="2">
+       &nbsp;
+     </td>
+    </tr>
+
+    <tr valign="center">
+     <td align="center" colspan="2">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="1" color=black>
+       <b>
+        &nbsp; &nbsp; VOLTS/DIV &nbsp; &nbsp;
+       </b>
+      </font>
+     </td>
+    </tr>
+    <tr valign="center">
+     <td align="center" colspan="2">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="2" color=black>
+      <SELECT NAME="channel1_scale" onChange="goThere(this.form, 'channel1_scale')">
+       <TMPL_LOOP NAME="channel1_scale_loop">
+       <TMPL_IF NAME="channel1_scale_opcion_elegida">
+       <OPTION SELECTED><TMPL_VAR NAME="channel1_scale">
+       <TMPL_ELSE>
+       <OPTION><TMPL_VAR NAME="channel1_scale">
+       </TMPL_IF>
+       </TMPL_LOOP>
+      </SELECT>
+      </font>
+     </td>
+    </tr>
+
+   </table>
+<!-- Ending Channel 1 Submenu Table -->
+
+     </td>
+
+     <td>
+
+<!-- Starting Channel 2 Submenu Table -->
+   <table border="1">
+
+    <tr valign="center">
+     <td colspan="4" align="center" valign="center">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="2" color=black>
+       <b>
+        &nbsp; &nbsp; Channel 2 &nbsp; &nbsp;
+       </b>
+      </font>
+     </td>
+    </tr>
+
+    <tr>
+     <td colspan="4">
+       &nbsp;
+     </td>
+    </tr>
+
+    <tr valign="center">
+     <td rowspan="3" align="left" valign="center">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="2" color=black>
+       <b>
+       Probe
+       </b>
+      </font>
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="1" color=black>
+       <TMPL_LOOP NAME="channel2_probe_loop">
+       <br>
+       <TMPL_IF NAME="channel2_probe_opcion_elegida">
+       <input type="radio" name="channel2_probe" value="<TMPL_VAR NAME="channel2_probe_key">" onClick="goThere(this.form, 'channel2_probe')" checked><TMPL_VAR NAME="channel2_probe">
+       <TMPL_ELSE>
+       <input type="radio" name="channel2_probe" value="<TMPL_VAR NAME="channel2_probe_key">" onClick="goThere(this.form, 'channel2_probe')"><TMPL_VAR NAME="channel2_probe">
+       </TMPL_IF>
+       </TMPL_LOOP>
+      </font>
+     </td>
+
+     <td rowspan="3" align="left" valign="center">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="2" color=black>
+       <b>
+       Coupling
+       </b>
+      </font>
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="1" color=black>
+       <TMPL_LOOP NAME="channel2_coupling_loop">
+       <br>
+       <TMPL_IF NAME="channel2_coupling_opcion_elegida">
+       <input type="radio" name="channel2_coupling" value="<TMPL_VAR NAME="channel2_coupling_key">" onClick="goThere(this.form, 'channel2_coupling')" checked><TMPL_VAR NAME="channel2_coupling">
+       <TMPL_ELSE>
+       <input type="radio" name="channel2_coupling" value="<TMPL_VAR NAME="channel2_coupling_key">" onClick="goThere(this.form, 'channel2_coupling')"><TMPL_VAR NAME="channel2_coupling">
+       </TMPL_IF>
+       </TMPL_LOOP>
+      </font>
+     </td>
+
+     <td align="center" valign="center">
+      <a href="index.html?channel2_offset=<TMPL_VAR NAME="channel2_offset_up">"><img src="/images/up.gif" width="15" height="15"></a>
+     </td>
+     <td rowspan="3" align="center" valign="center">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="1" color=black>
+       <b>
+        &nbsp; POSITION &nbsp; &nbsp;
+       </b>
+      </font>
+     </td>
+    </tr>
+
+    <tr valign="center">
+     <td align="center" valign="center">
+      <font face="Courier, Courier New, Monaco" size="2" color="black">
+       <b>
+        <TMPL_VAR NAME="channel2_offset">
+       </b>
+      </font>
+     </td>
+    </tr>
+
+    <tr valign="center">
+     <td align="center" valign="center">
+      <a href="index.html?channel2_offset=<TMPL_VAR NAME="channel2_offset_down">"><img src="/images/down.gif" width="15" height="15"></a>
+     </td>
+    </tr>
+
+    <tr>
+
+     <td rowspan="3" align="left" valign="center">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="2" color=black>
+       <b>
+       Bw Limit
+       </b>
+      </font>
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="1" color=black>
+       <TMPL_LOOP NAME="channel2_bwlimit_loop">
+       <br>
+       <TMPL_IF NAME="channel2_bwlimit_opcion_elegida">
+       <input type="radio" name="channel2_bwlimit" value="<TMPL_VAR NAME="channel2_bwlimit_key">" onClick="goThere(this.form, 'channel2_bwlimit')" checked><TMPL_VAR NAME="channel2_bwlimit">
+       <TMPL_ELSE>
+       <input type="radio" name="channel2_bwlimit" value="<TMPL_VAR NAME="channel2_bwlimit_key">" onClick="goThere(this.form, 'channel2_bwlimit')"><TMPL_VAR NAME="channel2_bwlimit">
+       </TMPL_IF>
+       </TMPL_LOOP>
+      </font>
+     </td>
+
+     <td rowspan="3" align="left" valign="center">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="2" color=black>
+       <b>
+       Invert
+       </b>
+      </font>
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="1" color=black>
+       <TMPL_LOOP NAME="channel2_invert_loop">
+       <br>
+       <TMPL_IF NAME="channel2_invert_opcion_elegida">
+       <input type="radio" name="channel2_invert" value="<TMPL_VAR NAME="channel2_invert_key">" onClick="goThere(this.form, 'channel2_invert')" checked><TMPL_VAR NAME="channel2_invert">
+       <TMPL_ELSE>
+       <input type="radio" name="channel2_invert" value="<TMPL_VAR NAME="channel2_invert_key">" onClick="goThere(this.form, 'channel2_invert')"><TMPL_VAR NAME="channel2_invert">
+       </TMPL_IF>
+       </TMPL_LOOP>
+      </font>
+     </td>
+
+     <td colspan="2">
+       &nbsp;
+     </td>
+    </tr>
+
+    <tr valign="center">
+     <td align="center" colspan="2">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="1" color=black>
+       <b>
+        &nbsp; &nbsp; VOLTS/DIV &nbsp; &nbsp;
+       </b>
+      </font>
+     </td>
+    </tr>
+    <tr valign="center">
+     <td align="center" colspan="2">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="2" color=black>
+      <SELECT NAME="channel2_scale" onChange="goThere(this.form, 'channel2_scale')">
+       <TMPL_LOOP NAME="channel2_scale_loop">
+       <TMPL_IF NAME="channel2_scale_opcion_elegida">
+       <OPTION SELECTED><TMPL_VAR NAME="channel2_scale">
+       <TMPL_ELSE>
+       <OPTION><TMPL_VAR NAME="channel2_scale">
+       </TMPL_IF>
+       </TMPL_LOOP>
+      </SELECT>
+      </font>
+     </td>
+    </tr>
+
+   </table>
+<!-- Ending Channel 2 Submenu Table -->
+
+     </td>
+
+    </tr>
+   </table>
+<!-- Ending Vertical Submenu Table -->
+
+     </td>
+     <td align="center" valign="center">
+
+<!-- Starting Horizontal Submenu Table -->
+   <table>
+    <tr valign="center">
+     <td colspan="3" align="center" valign="center">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="2" color=black>
+       <b>
+        &nbsp; &nbsp; HORIZONTAL &nbsp; &nbsp;
+       </b>
+      </font>
+     </td>
+    </tr>
+
+    <tr>
+     <td colspan="3">
+       &nbsp;
+     </td>
+    </tr>
+
+    <tr valign="center">
+     <td colspan="3" align="center" valign="center">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="1" color=black>
+       <b>
+        &nbsp; &nbsp; POSITION &nbsp; &nbsp;
+       </b>
+      </font>
+     </td>
+    </tr>
+
+    <tr valign="center">
+     <td align="center" valign="center">
+      <a href="index.html?timebase_delay=<TMPL_VAR NAME="timebase_delay_left">"><img src="/images/left.gif" width="15" height="15"></a>
+     </td>
+     <td align="center" valign="center">
+      <font face="Courier, Courier New, Monaco" size="2" color="black">
+       <b>
+        <TMPL_VAR NAME="timebase_delay">
+       </b>
+      </font>
+     </td>
+     <td align="center" valign="center">
+      <a href="index.html?timebase_delay=<TMPL_VAR NAME="timebase_delay_right">"><img src="/images/right.gif" width="15" height="15"></a>
+     </td>
+    </tr>
+
+    <tr>
+     <td colspan="3">
+       &nbsp;
+     </td>
+    </tr>
+
+    <tr valign="center">
+     <td align="center" colspan="3">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="1" color=black>
+       <b>
+        &nbsp; &nbsp; TIME/DIV &nbsp; &nbsp;
+       </b>
+      </font>
+     </td>
+    </tr>
+    <tr valign="center">
+     <td align="center" colspan="3">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="2" color=black>
+      <SELECT NAME="timebase_scale" onChange="goThere(this.form, 'timebase_scale')">
+       <TMPL_LOOP NAME="timebase_scale_loop">
+       <TMPL_IF NAME="timebase_scale_opcion_elegida">
+       <OPTION SELECTED><TMPL_VAR NAME="timebase_scale">
+       <TMPL_ELSE>
+       <OPTION><TMPL_VAR NAME="timebase_scale">
+       </TMPL_IF>
+       </TMPL_LOOP>
+      </SELECT>
+      </font>
+     </td>
+    </tr>
+
+   </table>
+<!-- Ending Horizontal Submenu Table -->
+
+     </td>
+    </tr>
+   </table>
+<!-- Ending General Table -->
+  </form>
+
+  <BR>

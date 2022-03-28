@@ -1,0 +1,72 @@
+Listado de Comandos del GDS-820C
+
+*CLS
+	Limpia los registros de datos que muestran el estado de los eventos.
+	Estos incluyen: la cola de salida, el registro de estado de los
+	eventos de operaciones, registros de estado de eventos cuestionables,
+	y registro de estado de eventos standars.
+	SIN USO ?
+*ESE
+	Setea o devuelve el valor de los bits del registro de habilitacion de
+	los estados de eventos (ESER). ???.
+	SIN USO ?
+*ESR? (Solo consulta)
+	Devuelve el valor del registro de estado de los eventos estandares.
+	SIN USO ?
+*IDN? (Solo consulta)
+	Devuelve el codigo de identificacion unico del osciloscopio.
+	SIN USO ?
+*LRN? (Solo consulta)
+	Devuelve la cadena con que el osciloscopio esta seteado.
+	SIN USO ?
+*OPC
+	Setea o devuelve el bit de operacion completa en el registro de 
+	estado de los eventos estandares.
+	SIN USO ?
+*RCL
+	Recupera el seteo de la memoria que haya sido grabada previamente.
+	SIN USO ?
+*RST
+	Setea todos los controles del osciloscopio en sus valores por
+	defecto, pero no limpia el seteo guardado.
+	SIN USO ?
+*SAV
+	Guarda los datos del seteo en memoria.
+	SIN USO ?
+*SRE
+	Configura el contenido del registro de habilitacion de requerimiento
+	de servicio. La consulta devuelve el valor del registro. El bit 6
+	siempre vale 0. 
+	SIN USO ?
+*STB? (Solo consulta)
+	Consulta el registro de estado.
+	SIN USO ?
+*WAI
+	Previene al instrumento de ejecutar mas comando hasta que todas
+	las operaciones pendientes hayan finalizado.
+	SIN USO ?
+:ACQUIRE:AVERAGE (Acquire -> Tecla Average -F3-)
+	Selecciona el promedio de adquisicion de la forma de onda.
+	El rango es de 2 a 256, en potencias de 2.
+:ACQUIRE:LENGTH (Acquire -> Tecla Mem Leng -F5-)
+	Selecciona el largo del registro.
+:ACQUIRE:MODE
+	Selecciona el modo de adquisicion de la forma de onda.
+	IMPORTANTE: Se debe seleccionar el modo especifico antes de 
+	realizar alguna adquisicion.
+:ACQUIREX:MEMORY? (Solo consulta)
+	Transfiere el dato completo de la forma de onda desde la memoria
+	de adquisicion (la capacidad de la memoria fue seleccionada con
+	:ACQUIRE:LENGTH). X representa el canal.
+	La cadena de datos devuelta representa lo siguiente:
+	# Ver Pag. 26.
+:ACQUIREX:POINT? (Solo consulta)
+	Transfiere el dato completo de la forma de onda que se esta mostrando
+	en pantalla. 
+	# Ver Pag. 28.
+:AUTOSET
+	Configura automaticamente el equipo para optimizar los parametros
+	de adquisicion.
+:CHANNELX:BWLIMIT
+	Habilita o deshabilita la funcion de limitacion de ancho de banda.
+	de adquisicion.

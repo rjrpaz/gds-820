@@ -1,0 +1,31 @@
+Pasos de Instalacion de la interfaz CGI para GDS-820
+
+- Componentes requeridos: Sistema Operativo Linux, mysql, apache.
+	libhtml-template-perl.
+
+- Agregar el archivo "admin.conf" del subdirectorio "conf/", al directorio
+	"/etc/apache/conf.d", y correr el comando "apache -t" para ver
+	si el apache no tiene problemas para reconocerlo. Si no reconoce
+	la sentencia "setenv" en el archivo, entonces agregar el siguiente
+	modulo del apache:
+	# apache-modconf apache enable mod_env
+
+MYSQL
+- Crear Base de Datos en Mysql.
+	# mysqladmin -u root -p create gds820
+	("gds820" es el nombre de la Base que contendra la informacion
+	de los usuarios que puedan acceder al uso del equipo²).
+- Crear tablas en la Base de Datos.
+	# mysql -u root -p < sql/crear_tablas.sql
+- Crear datos iniciales en las tablas.
+	Para ello, hay que acomodar los valores en el archivo 
+	"sql/crear_configuracion_inicial.sql" antes de correr el
+	comando:
+	# mysql -u root -p < sql/crear_configuracion_inicial.sql
+- Crear usuario que utilizara el cgi para interactuar con la base de datos.
+	# mysql -u root -p
+	#mysql> GRANT SELECT, INSERT, UPDATE, DELETE ON gds820.* TO usuario@localhost IDENTIFIED BY 'password';
+
+- Acomodar los valores de gds820_setup.pm a los valores de usuario y
+password determinados para el lugar.
+

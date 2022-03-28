@@ -1,0 +1,50 @@
+
+   <table>
+
+    <tr valign="center">
+     <td align="left" valign="center">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="2" color=black>
+       &nbsp; <b> Enter a label to identify the graph:</b>
+      </font>
+     </td>
+
+     <td align="left" valign="center" width="20">
+      &nbsp; 
+     </td>
+
+     <td align="left" valign="center">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="2" color=black>
+       &nbsp; <input type=text name="graphname" size="20" value="<TMPL_VAR NAME="graphname">">
+      </font>
+     </td>
+
+    </tr>
+
+    <tr valign="center" height="10">
+     <td align="left" valign="center" colspan="3">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="2" color=black>
+       &nbsp;
+      </font>
+     </td>
+    </tr>
+
+    <tr valign="center">
+     <td align="center" valign="center" colspan="3">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="1" color=black>
+       <tmpl_if name="save">
+       <input type=submit name="save" value="Save" onClick="window.location.href='save.html?graphname=<TMPL_VAR NAME="graphname">'">
+       <tmpl_else>
+       <input type=submit name="load" value="Load" onClick="window.location.href='load.html?graphname=<TMPL_VAR NAME="graphname">'">
+       </tmpl_if>
+      </font>
+       &nbsp;
+       &nbsp;
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="1" color=black>
+       <input type="button" value="Back to GDS-820" onClick="window.location.href='index.html'">
+      </font>
+     </td>
+    </tr>
+
+   </table>
+
+  <BR>

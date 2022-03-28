@@ -1,0 +1,107 @@
+#!/usr/bin/perl -w
+
+use gds820;
+use strict;
+use CGI qw(:standard escapeHTML);
+use CGI::Cookie;
+use HTML::Template;
+
+my @registro = ();
+
+my %cookies = fetch CGI::Cookie;
+my %config = ();
+
+my $graphname = "";
+my $tmpldir = &config('path_template');
+my $template = HTML::Template->new(filename => 'header.tmpl', path => $tmpldir);
+
+my $titulo = &config('titulo_principal');
+$template->param(titulo => $titulo);
+my $color_de_fondo = &config('color_de_fondo');
+$template->param(color_de_fondo => $color_de_fondo);
+
+my $url1 = $ENV{'SERVER_NAME'}.$ENV{'SCRIPT_NAME'};
+my $url2 = $ENV{'SERVER_NAME'}."/gds820/cgi-bin/index.html";
+my $http_referer = $ENV{'HTTP_REFERER'};
+
+print STDERR "REF: $http_referer \n";
+print STDERR "URL1: $url1 \n";
+print STDERR "URL2: $url2 \n";
+
+#if (!defined($http_referer))
+#{
+##	$http_referer = $ENV{'SERVER_NAME'}.$ENV{'SCRIPT_NAME'};
+#	;
+#}
+#else
+#{
+#	if ($http_referer eq "")
+#	{
+#		$http_referer = $cookies{'http_referer'}->value;
+#	}
+#}
+
+if ((defined($http_referer)) && (($http_referer =~ m/$url1/) || ($http_referer =~ m/$url2/)))
+{
+	# Obtiene usuario y contraseña
+	my $usuario = $cookies{'usuario'}->value if (defined($cookies{'usuario'}));
+	my $password = $cookies{'password'}->value if (defined($cookies{'password'}));
+
+#	print STDERR "USUARIO: $usuario \n";
+#	print STDERR "PASSWORD: $password \n";
+
+	# Chequea validez de usuario y contrasena
+	if (!(&chequeo_crypt_password($usuario, $password)))
+	{
+		&return_error("Error", "Usuario o Password incorrecta", "", "1270");
+	}
+
+	# Si el referer de la pagina es ella misma, salvar el grafico
+	# y colocar mensaje de exito en la operacion.
+	if ($http_referer =~ m/$url1/)
+	{
+		if (defined(param('graphname')))
+		{
+			$graphname = param('graphname');
+		}
+		if (&graphname_is_used($usuario, $graphname))
+		{
+			&return_error("Error", "That label is already used", "", "1270");
+		}
+
+		# Imprime cabecera de pagina HTML
+		print header();
+		print $template->output;
+
+		&save_graph($usuario, $graphname);
+
+		$template = HTML::Template->new(filename => 'save_2.tmpl', path => $tmpldir);
+		print $template->output;
+	}
+	else
+	{
+		# Imprime cabecera de pagina HTML
+		print header();
+		print $template->output;
+
+		$template = HTML::Template->new(filename => 'save_1.tmpl', path => $tmpldir);
+		$graphname = &get_graphname($usuario);
+		$template->param(save => "1");
+		$template->param(graphname => $graphname);
+		print $template->output;
+	}
+}
+else
+{
+	 &return_error("Error", "No puede ingresar directamente a la pagina.", "", "666");
+}
+
+$template = HTML::Template->new(filename => 'footer.tmpl', path => $tmpldir);
+
+my $usar_link_pagina_principal = 0;
+$template->param(usar_link_pagina_principal => $usar_link_pagina_principal);
+
+print $template->output;
+
+exit(0);
+

@@ -1,0 +1,284 @@
+
+  <BR>
+
+  <form action="<TMPL_VAR NAME="link_form">" method="post">
+   <table align="center" border="<TMPL_VAR NAME="mostrar_borde">" cellpadding="<TMPL_VAR NAME="mostrar_borde">" cellspacing="<TMPL_VAR NAME="mostrar_borde">">
+
+    <INPUT TYPE="hidden" NAME="paso" VALUE="<TMPL_VAR NAME="paso">">
+
+    <tr>
+     <td colspan="2" align="center">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="4" color=gray>
+       <TMPL_IF NAME="pagina_de_modificacion">
+        Ud. está en el paso <TMPL_VAR NAME="paso"> de <TMPL_VAR NAME="cantidad_de_pasos"> del proceso de modificación de los abonados &nbsp; &nbsp;
+       <TMPL_ELSE>
+        Ud. está en el paso <TMPL_VAR NAME="paso"> de <TMPL_VAR NAME="cantidad_de_pasos"> del proceso de alta de abonados &nbsp; &nbsp;
+       </TMPL_IF>
+      </font>
+     </td>
+    </tr>
+
+    <tr>
+     <td colspan="2">
+       &nbsp;
+     </td>
+    </tr>
+
+    <tr>
+     <td colspan="2" align="center">
+      <TMPL_UNLESS NAME="pagina_de_modificacion">
+       <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="4">
+       Ingrese a continuación los datos del abonado a dar de alta &nbsp; &nbsp;
+       </font>
+      </TMPL_UNLESS>
+    </td>
+    </tr>
+
+    <tr>
+     <td colspan="2">
+       &nbsp;
+     </td>
+    </tr>
+
+    <tr>
+     <td>
+       Franquicia: &nbsp; &nbsp;
+     </td>
+     <td>
+      <SELECT NAME="franquicia">
+       <TMPL_LOOP NAME="franquicia_loop">
+       <TMPL_IF NAME="franquicia_opcion_elegida">
+       <OPTION SELECTED><TMPL_VAR NAME="franquicia">
+       <TMPL_ELSE>
+       <OPTION><TMPL_VAR NAME="franquicia">
+       </TMPL_IF>
+       </TMPL_LOOP>
+      </SELECT>
+     </td>
+    </tr>
+
+    <tr>
+     <td colspan="2">
+       &nbsp;
+     </td>
+    </tr>
+
+    <TMPL_IF NAME="mostrar_franquicia_nueva">
+    <tr>
+     <td>
+       o ingrese una franquicia nueva: &nbsp; &nbsp;
+     </td>
+     <td>
+      <INPUT TYPE="text" NAME="franquicia_nueva" VALUE="<TMPL_VAR NAME="franquicia_nueva_default">" SIZE="50">
+     </td>
+    </tr>
+
+    <tr>
+     <td colspan="2">
+       &nbsp;
+     </td>
+    </tr>
+    </TMPL_IF NAME>
+
+    <tr>
+     <td>
+      <font color="<TMPL_VAR NAME="nombre_color">">
+       Nombre: &nbsp; &nbsp;
+      </font>
+     </td>
+     <td>
+      <INPUT TYPE="text" NAME="nombre" VALUE="<TMPL_VAR NAME="nombre_default">" SIZE="50">
+     </td>
+    </tr>
+
+    <tr>
+     <td colspan="2">
+       &nbsp;
+     </td>
+    </tr>
+
+    <tr>
+     <td>
+      <font color="<TMPL_VAR NAME="ciudad_color">">
+       Ciudad: &nbsp; &nbsp;
+      </font>
+     </td>
+     <td>
+      <INPUT TYPE="text" NAME="ciudad" VALUE="<TMPL_VAR NAME="ciudad_default">" SIZE="50">
+     </td>
+    </tr>
+
+    <tr>
+     <td colspan="2">
+       &nbsp;
+     </td>
+    </tr>
+
+    <tr>
+     <td>
+      <font color="<TMPL_VAR NAME="domicilio_color">">
+       Domicilio: &nbsp; &nbsp;
+      </font>
+     </td>
+     <td>
+      <INPUT TYPE="text" NAME="domicilio" VALUE="<TMPL_VAR NAME="domicilio_default">" SIZE="50">
+     </td>
+    </tr>
+
+    <tr>
+     <td colspan="2">
+       &nbsp;
+     </td>
+    </tr>
+
+    <tr>
+     <td>
+      <font color="<TMPL_VAR NAME="telefono_color">">
+       Teléfono: &nbsp; &nbsp;
+      </font>
+     </td>
+     <td>
+      <INPUT TYPE="text" NAME="telefono" VALUE="<TMPL_VAR NAME="telefono_default">" SIZE="50">
+     </td>
+    </tr>
+
+    <tr>
+     <td colspan="2">
+       &nbsp;
+     </td>
+    </tr>
+
+    <INPUT TYPE="hidden" NAME="categoria_anterior" VALUE="<TMPL_VAR NAME="categoria_anterior">">
+    <tr>
+     <td>
+       Categoria: &nbsp; &nbsp;
+     </td>
+     <td>
+      <SELECT NAME="categoria">
+       <TMPL_LOOP NAME="categoria_loop">
+       <TMPL_IF NAME="categoria_opcion_elegida">
+       <OPTION SELECTED><TMPL_VAR NAME="categoria">
+       <TMPL_ELSE>
+       <OPTION><TMPL_VAR NAME="categoria">
+       </TMPL_IF>
+       </TMPL_LOOP>
+      </SELECT>
+     </td>
+    </tr>
+
+    <tr>
+     <td colspan="2">
+       &nbsp;
+     </td>
+    </tr>
+
+    <tr>
+     <td>
+       Canal: &nbsp; &nbsp;
+     </td>
+     <td>
+      <SELECT NAME="canal">
+       <TMPL_LOOP NAME="canal_loop">
+       <TMPL_IF NAME="canal_opcion_elegida">
+       <OPTION SELECTED><TMPL_VAR NAME="canal">
+       <TMPL_ELSE>
+       <OPTION><TMPL_VAR NAME="canal">
+       </TMPL_IF>
+       </TMPL_LOOP>
+      </SELECT>
+     </td>
+    </tr>
+
+    <tr>
+     <td colspan="2">
+       &nbsp;
+     </td>
+    </tr>
+
+    <tr>
+     <td>
+       Sistema Operativo: &nbsp; &nbsp;
+     </td>
+     <td>
+      <SELECT NAME="sistema_operativo">
+       <TMPL_LOOP NAME="sistema_operativo_loop">
+       <TMPL_IF NAME="sistema_operativo_opcion_elegida">
+       <OPTION SELECTED><TMPL_VAR NAME="sistema_operativo">
+       <TMPL_ELSE>
+       <OPTION><TMPL_VAR NAME="sistema_operativo">
+       </TMPL_IF>
+       </TMPL_LOOP>
+      </SELECT>
+     </td>
+    </tr>
+
+    <tr>
+     <td colspan="2">
+       &nbsp;
+     </td>
+    </tr>
+
+    <tr>
+     <td>
+       o ingrese una sistema operativo nuevo: &nbsp; &nbsp;
+     </td>
+     <td>
+      <INPUT TYPE="text" NAME="sistema_operativo_nuevo" VALUE="<TMPL_VAR NAME="sistema_operativo_nuevo">" SIZE="50">
+     </td>
+    </tr>
+
+    <tr>
+     <td colspan="2">
+       &nbsp;
+     </td>
+    </tr>
+
+    <tr>
+     <td>
+      <font color="<TMPL_VAR NAME="mac_color">">
+       MAC Address PC: &nbsp; &nbsp;
+      </font>
+     </td>
+     <td>
+      <INPUT TYPE="text" NAME="mac1" VALUE="<TMPL_VAR NAME="mac1_default">" SIZE="2"> : <INPUT TYPE="text" NAME="mac2" VALUE="<TMPL_VAR NAME="mac2_default">" SIZE="2"> : <INPUT TYPE="text" NAME="mac3" VALUE="<TMPL_VAR NAME="mac3_default">" SIZE="2"> : <INPUT TYPE="text" NAME="mac4" VALUE="<TMPL_VAR NAME="mac4_default">" SIZE="2"> : <INPUT TYPE="text" NAME="mac5" VALUE="<TMPL_VAR NAME="mac5_default">" SIZE="2"> : <INPUT TYPE="text" NAME="mac6" VALUE="<TMPL_VAR NAME="mac6_default">" SIZE="2">
+     </td>
+    </tr>
+
+
+    <tr>
+     <td colspan="2">
+       &nbsp;
+     </td>
+    </tr>
+
+    <tr>
+     <td>
+      <font color="<TMPL_VAR NAME="macb_color">">
+       MAC Address Bridge: &nbsp; &nbsp;
+      </font>
+      <br>
+      <font size="2">
+      (Deje en blanco si la PC se conecta
+      <br>
+      directamente a la red inhalámbrica).
+      </font>
+     </td>
+     <td>
+      <INPUT TYPE="text" NAME="mac1b" VALUE="<TMPL_VAR NAME="mac1b_default">" SIZE="2"> : <INPUT TYPE="text" NAME="mac2b" VALUE="<TMPL_VAR NAME="mac2b_default">" SIZE="2"> : <INPUT TYPE="text" NAME="mac3b" VALUE="<TMPL_VAR NAME="mac3b_default">" SIZE="2"> : <INPUT TYPE="text" NAME="mac4b" VALUE="<TMPL_VAR NAME="mac4b_default">" SIZE="2"> : <INPUT TYPE="text" NAME="mac5b" VALUE="<TMPL_VAR NAME="mac5b_default">" SIZE="2"> : <INPUT TYPE="text" NAME="mac6b" VALUE="<TMPL_VAR NAME="mac6b_default">" SIZE="2">
+     </td>
+    </tr>
+
+    <tr>
+     <td colspan="2">
+       &nbsp;
+     </td>
+    </tr>
+
+    <tr>
+     <td colspan="2" align="center">
+      <input type="submit" value="    Siguiente >>   ">
+     </td>
+    </tr>
+
+   </table>
+   </form>

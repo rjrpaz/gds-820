@@ -1,0 +1,69 @@
+<HTML>
+ <HEAD>
+  <TITLE>
+   <TMPL_VAR NAME="titulo">
+  </TITLE>
+
+<SCRIPT LANGUAGE="JavaScript">
+function goThere(frm, btnName)
+{
+	var btn = frm[btnName]
+	var valid
+
+	for (var y = 0; y < frm.length; y++)
+	{
+		if (frm.elements[y].name == btnName)
+		{
+			break
+		}
+	}
+
+	var e = frm.elements[y];
+	if (e.type == "radio")
+	{
+		for (var x = 0; x < btn.length; x++)
+		{
+			valid = btn[x].checked
+			if (valid)
+			{
+				break
+			}
+		}
+		location = "?" + btn[x].name + "=" + btn[x].value
+	}
+	else if (e.type == "checkbox")
+	{
+		var url = ""
+		for (var x = 0; x < btn.length; x++)
+		{
+			if (url != "")
+			{
+				url = url + ","
+			}
+
+			valid = btn[x].checked;
+
+			if (valid)
+			{
+				url = url + "1"
+			}
+			else
+			{
+				url = url + "0"
+			}
+		}
+		location = "?" + btn[0].name + "=" + url
+	}
+	else
+	{
+		location = "?" + btn.name + "=" + btn.value
+	}
+}
+</SCRIPT>
+
+  <TMPL_IF NAME="refresco_pagina">
+  <META HTTP-EQUIV="REFRESH" CONTENT="60">
+  </TMPL_IF>
+ </HEAD>
+ <BODY BGCOLOR="<TMPL_VAR NAME="color_de_fondo" DEFAULT="#ffffff">">
+

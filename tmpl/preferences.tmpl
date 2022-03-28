@@ -1,0 +1,57 @@
+  <form name="preferences.html" method="post">
+
+   <table>
+
+    <tr valign="center">
+     <td align="left" valign="center" colspan="3">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="2" color=black>
+       &nbsp; <b>Show the following summary information:</b>
+      </font>
+     </td>
+    </tr>
+
+    <tr valign="center" height="10">
+     <td align="left" valign="center" colspan="3">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="2" color=black>
+       &nbsp;
+      </font>
+     </td>
+    </tr>
+
+    <TMPL_LOOP NAME="show_loop">
+    <tr valign="center">
+     <td align="left" valign="center" width="20">
+      &nbsp;
+     </td>
+     <td align="left" valign="center">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="1" color=black>
+       <TMPL_IF NAME="show_opcion_elegida">
+       <input type=checkbox name="show" value="<TMPL_VAR NAME="show_key">" checked>&nbsp;<TMPL_VAR NAME="show">
+       <TMPL_ELSE>
+       <input type=checkbox name="show" value="<TMPL_VAR NAME="show_key">">&nbsp;<TMPL_VAR NAME="show">
+       </TMPL_IF>
+      </font>
+     </td>
+     <td align="left" valign="center" width="20">
+      &nbsp;
+     </td>
+    </tr>
+    </TMPL_LOOP>
+
+    <tr valign="center">
+     <td align="center" valign="center" colspan="3">
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="1" color=black>
+       <input type=submit name="guardar" value="Guardar">
+      </font>
+       &nbsp;
+       &nbsp;
+      <font face="Arial, Helvetica, Geneva, Swiss, SunSans-Regular" size="1" color=black>
+       <input type="button" value="Back to GDS-820" onClick="window.location.href='index.html'">
+      </font>
+     </td>
+    </tr>
+
+   </table>
+  </form>
+
+  <BR>

@@ -1,0 +1,994 @@
+#!/usr/bin/perl -w
+
+use gds820;
+use strict;
+use CGI qw(:standard escapeHTML);
+use CGI::Cookie;
+use HTML::Template;
+use Tie::IxHash;
+use File::Basename;
+
+my %cookies = fetch CGI::Cookie;
+my %config = ();
+my @cookie = ();
+
+my $tmpldir = &config('path_template');
+my $template = HTML::Template->new(filename => 'header.tmpl', path => $tmpldir);
+
+my $titulo = &config('titulo_principal');
+$template->param(titulo => $titulo);
+my $color_de_fondo = &config('color_de_fondo');
+$template->param(color_de_fondo => $color_de_fondo);
+
+my $url = $ENV{'SERVER_NAME'}.$ENV{'SCRIPT_NAME'};
+my $path = dirname($url);
+my $url2 = $path.'/preferences.html';
+my $url3 = $path.'/save.html';
+my $url4 = $path.'/load.html';
+print STDERR "URL: $url \n";
+print STDERR "URL2: $url2 \n";
+my $http_referer = $ENV{'HTTP_REFERER'};
+print STDERR "REF: $http_referer \n";
+
+if (!defined($http_referer))
+{
+#	$http_referer = $ENV{'SERVER_NAME'}.$ENV{'SCRIPT_NAME'};
+}
+else
+{
+if ($http_referer eq "")
+{
+$http_referer = $cookies{'http_referer'}->value;
+	}
+}
+
+push(@cookie, new CGI::Cookie(-name=>'http_referer', -value=>$http_referer, -path=>'/gds820/'));
+
+my @registro = ();
+my %mostrar = ();
+tie %mostrar, "Tie::IxHash";
+$mostrar{0} = 1;
+$mostrar{1} = 0;
+$mostrar{2} = 0;
+my $mostrar = "";
+my $source_es_math = 0;
+my %channel_scale_para_1 = ();
+my %channel_scale_para_2 = ();
+my $channel1_scale = '50mV';
+my $channel2_scale = '50mV';
+my $channel1_probe = '0';
+my $channel2_probe = '0';
+my $channel1_coupling = '0';
+my $channel2_coupling = '0';
+my $channel1_bwlimit = '0';
+my $channel2_bwlimit = '0';
+my $channel1_invert = '0';
+my $channel2_invert = '0';
+my $channel1_offset = '0V';
+my $channel2_offset = '0V';
+my $channel1_offset_step = 0;
+my $channel2_offset_step = 0;
+my $timebase_scale = '250us';
+my $timebase_delay = '0';
+my $timebase_delay_step = 0;
+my $cursor_source = 1;
+my $cursor_x1position = 1;
+my $cursor_x2position = 1;
+my $cursor_y1position = 1;
+my $cursor_y2position = 1;
+my $cursor_x1position_v = 0;
+my $cursor_x2position_v = 0;
+my $cursor_y1position_v = 0;
+my $cursor_y2position_v = 0;
+my $modify_cursor = &leer_cursor;
+my $cursor_xdelta = 0;
+my $cursor_ydelta = 0;
+my $measure_vmax_1 = 0;
+my $measure_vmin_1 = 0;
+my $measure_vpp_1 = 0;
+my $measure_vhi_1 = 0;
+my $measure_vlo_1 = 0;
+my $measure_vamp_1 = 0;
+my $measure_vavg_1 = 0;
+my $measure_vrms_1 = 0;
+my $measure_freq_1 = 0;
+my $measure_period_1 = 0;
+my $measure_rise_1 = 0;
+my $measure_fall_1 = 0;
+my $measure_pwidth_1 = 0;
+my $measure_nwidth_1 = 0;
+my $measure_pduty_1 = 0;
+my $measure_vmax_2 = 0;
+my $measure_vmin_2 = 0;
+my $measure_vpp_2 = 0;
+my $measure_vhi_2 = 0;
+my $measure_vlo_2 = 0;
+my $measure_vamp_2 = 0;
+my $measure_vavg_2 = 0;
+my $measure_vrms_2 = 0;
+my $measure_freq_2 = 0;
+my $measure_period_2 = 0;
+my $measure_rise_2 = 0;
+my $measure_fall_2 = 0;
+my $measure_pwidth_2 = 0;
+my $measure_nwidth_2 = 0;
+my $measure_pduty_2 = 0;
+
+my $exponente = "";
+
+if ((defined($http_referer)) && (($http_referer =~ m/$url/) || ($http_referer =~ m/$url2/) || ($http_referer =~ m/$url3/) || ($http_referer =~ m/$url4/)))
+{
+	# Obtiene usuario y contraseña
+	my $usuario = "";
+	my $password = "";
+	if (defined(param('usuario')))
+	{
+		$usuario = param('usuario');
+		$password = param('password');
+		print STDERR "U: $usuario \n";
+		print STDERR "P: $password \n";
+
+		if (!(&chequeo_password($usuario, $password)))
+		{
+			&return_error("Error", "Usuario o Password incorrecta", "", "1271");
+		}
+		$password = &md5($password);
+	}
+	elsif (defined($cookies{'usuario'}))
+	{
+		$usuario = ($cookies{'usuario'}->value);
+		$password = ($cookies{'password'}->value) if (defined($cookies{'password'}));
+		print STDERR "U: $usuario \n";
+		print STDERR "P: $password \n";
+
+		if (!(&chequeo_crypt_password($usuario, $password)))
+		{
+			&return_error("Error", "Usuario o Password incorrecta", "", "1270");
+		}
+	}
+
+	%config = get_config($usuario);
+
+	###################################
+	###                             ###
+	### DEFINICIONES DE LOS VALORES ###
+	###                             ###
+	###################################
+
+	# SHOW: Estos valores hacen referencia a las fuentes
+	# de informacion que utilizara en pantalla.
+	if (defined($cookies{'show'}))
+	{
+		# Recuperar los valores de una cookie.
+		my @arr = split/\,/,  $cookies{'show'}->value;
+		# pero los pisa si se cambio a partir de la pagina.
+	 	@arr = split /\,/, param('show') if (defined(param('show')));
+
+		my $contador = 0;
+		while ($contador <= $#arr)
+		{
+			$mostrar{$contador} = $arr[$contador];
+			$contador++;
+		}
+	}
+	($mostrar{0} == 1) ? &ejecutar(":CHANNEL1:DISPLAY 1") : &ejecutar(":CHANNEL1:DISPLAY 0");
+	($mostrar{1} == 1) ? &ejecutar(":CHANNEL2:DISPLAY 1") : &ejecutar(":CHANNEL2:DISPLAY 0");
+
+	# CHANNELX:PROBE: La atenuacion del canal debe estar determinada
+	# antes de configurar la escala vertical ($channelx_scale),
+	# ya que una vez que reconfiguramos este valor, la escala
+	# se acomoda automaticamente.
+	$channel1_probe = &calcular_valor('channel1_probe') if ($mostrar{0} == 1);
+	$channel2_probe = &calcular_valor('channel2_probe') if ($mostrar{1} == 1);
+
+	# CHANNELX:COUPLING: El acoplamiento del canal
+	$channel1_coupling = &calcular_valor('channel1_coupling') if ($mostrar{0} == 1);
+	$channel2_coupling = &calcular_valor('channel2_coupling') if ($mostrar{1} == 1);
+
+	# CHANNELX:BWLIMIT: Habilita o deshabilita la limitacion de ancho
+	# de banda.
+	$channel1_bwlimit = &calcular_valor('channel1_bwlimit') if ($mostrar{0} == 1);
+	$channel2_bwlimit = &calcular_valor('channel2_bwlimit') if ($mostrar{1} == 1);
+
+	# CHANNELX:INVERT: Habilita o deshabilita la funcion de inversion
+	# de la forma de onda.
+	$channel1_invert = &calcular_valor('channel1_invert') if ($mostrar{0} == 1);
+	$channel2_invert = &calcular_valor('channel2_invert') if ($mostrar{1} == 1);
+
+	# CHANNELX:SCALE: Los Volts/Div deben estar determinados
+	# antes de configurar el offset vertical ($channelX_offset_step),
+	# ya que el valor de este ultimo esta definido como una 25ava. parte.
+	# del primero.
+	# Las escalas de cada canal las calculo afuera para que puedan
+	# ser utilizadas luego por la funcion que calcula los cursores.
+	# La fuente de los cursores no tiene relacion con el canal que
+	# se pueda mostrar.
+	$channel1_scale = &calcular_valor('channel1_scale');
+	if ($mostrar{0} == 1)
+	{
+		tie %channel_scale_para_1, "Tie::IxHash";
+		%channel_scale_para_1 = %channel_scale_0 if ($channel1_probe == 0);
+		%channel_scale_para_1 = %channel_scale_1 if ($channel1_probe == 1);
+		%channel_scale_para_1 = %channel_scale_2 if ($channel1_probe == 2);
+	}
+	$channel2_scale = &calcular_valor('channel2_scale');
+	if ($mostrar{1} == 1)
+	{
+		tie %channel_scale_para_2, "Tie::IxHash";
+		%channel_scale_para_2 = %channel_scale_0 if ($channel2_probe == 0);
+		%channel_scale_para_2 = %channel_scale_1 if ($channel2_probe == 1);
+		%channel_scale_para_2 = %channel_scale_2 if ($channel2_probe == 2);
+	}
+
+	# CHANNELX:OFFSET: El offset vertical debe estar determinado luego
+	# de la escala vertical, ya que el paso de este ultimo vale una
+	# 25ava. parte de la escala.
+	# Los offsets de cada canal las calculo afuera para que puedan
+	# ser utilizadas luego por la funcion que calcula los cursores.
+	# La fuente de los cursores no tiene relacion con el canal que
+	# se pueda mostrar.
+#	$channel1_offset = &calcular_valor('channel1_offset') if ($mostrar{0} == 1);
+#	$channel2_offset = &calcular_valor('channel2_offset') if ($mostrar{1} == 1);
+	$channel1_offset = &calcular_valor('channel1_offset');
+	$channel2_offset = &calcular_valor('channel2_offset');
+
+	# TIMEBASE:SCALE: Escala de Tiempos. Debe estar determinada
+	# antes de configurar el delay ($timebase_delay), ya que el valor
+	# este ultimo esta definido como una 25ava. parte.
+	# del primero.
+	$timebase_scale = &calcular_valor('timebase_scale');
+
+	# TIMEBASE:DELAY: El delay de la base de tiempos debe estar
+	# determinado luego de la escala vertical, ya que el paso de
+	# este ultimo vale una 25ava. parte de la escala de tiempos.
+	$timebase_delay = &calcular_valor('timebase_delay');
+
+	# CURSOR:SOURCE: Este valor nos permite saber el tipo de
+	# magnitud que representan los cursores en el grafico.
+	$cursor_source = &calcular_valor('cursor_source');
+
+	# CURSOR:SOURCE: Este valor nos permite saber el tipo de
+	# magnitud que representan los cursores en el grafico.
+	if (defined(param('modify_cursor')))
+	{
+		$modify_cursor = param('modify_cursor');
+		&escribir_cursor($modify_cursor);
+	}
+
+	# CURSOR:X{1|2}POSITION: El valor del cursor vertical depende de
+	# la escala de tiempo, si estamos utilizando canal 1 o canal 2
+	# como fuente de cursores.
+	$cursor_x1position_v = &calcular_valor('cursor_x1position');
+	$cursor_x2position_v = &calcular_valor('cursor_x2position');
+	$cursor_x1position = &time2dot($cursor_x1position_v, $timebase_scale);
+	$cursor_x2position = &time2dot($cursor_x2position_v, $timebase_scale);
+	# CURSOR:Y{1|2}POSITION: El valor del cursor horizontal depende de
+	# la escala de voltaje, y el offset vertical de la fuente.
+	$cursor_y1position_v = &calcular_valor('cursor_y1position');
+	$cursor_y2position_v = &calcular_valor('cursor_y2position');
+
+	my $channel_offset = "";
+	my $channel_scale = "";
+	if ($cursor_source == 1)
+	{
+		$channel_offset = $channel1_offset;
+		$channel_scale = $channel1_scale;
+	}
+	elsif ($cursor_source == 2)
+	{
+		$channel_offset = $channel2_offset;
+		$channel_scale = $channel2_scale;
+	}
+	
+	print STDERR "CURSOR_Y1POSITION_V: $cursor_y1position_v\n";
+	print STDERR "CURSOR_Y2POSITION_V: $cursor_y2position_v\n";
+	print STDERR "CHANNEL_SCALE: $channel_scale\n";
+	print STDERR "CHANNEL_OFFSET: $channel_offset\n";
+	$cursor_y1position = &volt2dot($cursor_y1position_v, $channel_scale, $channel_offset);
+	$cursor_y2position = &volt2dot($cursor_y2position_v, $channel_scale, $channel_offset);
+	print STDERR "CURSOR_Y1POSITION_DOT: $cursor_y1position\n";
+	print STDERR "CURSOR_Y2POSITION_DOT: $cursor_y2position\n";
+
+	my $query_string = $ENV{'QUERY_STRING'};
+	print STDERR "QUERY_STRING: $query_string \n";
+
+	if ($query_string =~ /^(\d+)\,(\d+)$/)
+	{
+		my $comando = "";
+#		my $x = 1.2 * $1 - 60;
+		my $x = 15 * $1 / 14 - 150 / 7;
+		my $y = $2 - 15;
+		$x = 1 if ($x < 1);
+		$x = 249 if ($x > 249);
+		$y = 1 if ($y < 1);
+		$y = 199 if ($y > 199);
+		if ($modify_cursor == 1)
+		{
+			$cursor_x1position = $x;
+			$comando = ":CURSOR:X1POSITION $x";
+		}
+		elsif ($modify_cursor == 2)
+		{
+			$cursor_x2position = $x;
+			$comando = ":CURSOR:X2POSITION $x";
+		}
+		elsif ($modify_cursor == 3)
+		{
+			$cursor_y1position = $y;
+			$comando = ":CURSOR:Y1POSITION $y";
+		}
+		elsif ($modify_cursor == 4)
+		{
+			$cursor_y2position = $y;
+			$comando = ":CURSOR:Y2POSITION $y";
+		}
+		&ejecutar($comando);
+	}
+
+	# Mediciones automaticas que realiza el osciloscopio
+	$cursor_xdelta = &ejecutar(":CURSOR:XDELTA?");
+	$cursor_ydelta = &ejecutar(":CURSOR:YDELTA?");
+
+	print STDERR "SHOW: ",$config{show_vmax}," \n";
+	if ($mostrar{0} == 1)
+	{
+		&ejecutar(":MEASURE:SOURCE 1");
+		$measure_vmax_1 = &ejecutar(":MEASURE:VMAX?") if ($config{show_vmax});
+		$measure_vmin_1 = &ejecutar(":MEASURE:VMIN?") if ($config{show_vmin});
+		$measure_vpp_1 = &ejecutar(":MEASURE:VPP?") if ($config{show_vpp});
+		$measure_vavg_1 = &ejecutar(":MEASURE:VAVERAGE?") if ($config{show_vavg});
+		$measure_vrms_1 = &ejecutar(":MEASURE:VRMS?") if ($config{show_vrms});
+		$measure_vhi_1 = &ejecutar(":MEASURE:VHI?") if ($config{show_vhi});
+		$measure_vlo_1 = &ejecutar(":MEASURE:VLO?") if ($config{show_vlo});
+		$measure_vamp_1 = &ejecutar(":MEASURE:VAMPLITUDE?") if ($config{show_vamp});
+		$measure_freq_1 = &ejecutar(":MEASURE:FREQUENCY?") if ($config{show_freq});
+		$measure_period_1 = &ejecutar(":MEASURE:PERIOD?") if ($config{show_period});
+		$measure_rise_1 = &ejecutar(":MEASURE:RISE?") if ($config{show_rise});
+		$measure_fall_1 = &ejecutar(":MEASURE:FALL?") if ($config{show_fall});
+		$measure_pwidth_1 = &ejecutar(":MEASURE:PWIDTH?") if ($config{show_pwidth});
+		$measure_nwidth_1 = &ejecutar(":MEASURE:NWIDTH?") if ($config{show_nwidth});
+		$measure_pduty_1 = &ejecutar(":MEASURE:PDUTY?") if ($config{show_pduty});
+	}
+
+	if ($mostrar{1} == 1)
+	{
+		&ejecutar(":MEASURE:SOURCE 2");
+		$measure_vmax_2 = &ejecutar(":MEASURE:VMAX?") if ($config{show_vmax});
+		$measure_vmin_2 = &ejecutar(":MEASURE:VMIN?") if ($config{show_vmin});
+		$measure_vpp_2 = &ejecutar(":MEASURE:VPP?") if ($config{show_vpp});
+		$measure_vavg_2 = &ejecutar(":MEASURE:VAVERAGE?") if ($config{show_vavg});
+		$measure_vrms_2 = &ejecutar(":MEASURE:VRMS?") if ($config{show_vrms});
+		$measure_vhi_2 = &ejecutar(":MEASURE:VHI?") if ($config{show_vhi});
+		$measure_vlo_2 = &ejecutar(":MEASURE:VLO?") if ($config{show_vlo});
+		$measure_vamp_2 = &ejecutar(":MEASURE:VAMPLITUDE?") if ($config{show_vamp});
+		$measure_freq_2 = &ejecutar(":MEASURE:FREQUENCY?") if ($config{show_freq});
+		$measure_period_2 = &ejecutar(":MEASURE:PERIOD?") if ($config{show_period});
+		$measure_rise_2 = &ejecutar(":MEASURE:RISE?") if ($config{show_rise});
+		$measure_fall_2 = &ejecutar(":MEASURE:FALL?") if ($config{show_fall});
+		$measure_pwidth_2 = &ejecutar(":MEASURE:PWIDTH?") if ($config{show_pwidth});
+		$measure_nwidth_2 = &ejecutar(":MEASURE:NWIDTH?") if ($config{show_nwidth});
+		$measure_pduty_2 = &ejecutar(":MEASURE:PDUTY?") if ($config{show_pduty});
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	# Imprime cabecera de pagina HTML
+	push (@cookie, new CGI::Cookie(-name=>'usuario', -value=>$usuario, -path=>'/gds820/'));
+	push (@cookie, new CGI::Cookie(-name=>'password', -value=>$password, -path=>'/gds820/'));
+
+	foreach my $key (keys %mostrar)
+	{
+		$mostrar = $mostrar."," if ($mostrar ne "");
+		$mostrar = $mostrar.$mostrar{$key};
+	}
+	push (@cookie, new CGI::Cookie(-name=>'show', -value=>$mostrar, -path=>'/gds820/'));
+	print header(-cookie=>[@cookie]);
+	print $template->output;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	#############################
+	###                       ###
+	### CALCULOS DE LOS PASOS ###
+	###                       ###
+	#############################
+
+	##################################################
+	### $channel1_offset_up, $channel1_offset_down ###
+	##################################################
+	$channel1_offset = str2sci_v($channel1_offset);
+	# En base al valor de la cantidad de volts por division, es que
+	# se define el valor del paso de la posicion vertical del osciloscopio
+	# El valor del paso es la 25ava. parte de la cantidad de volts/div.
+	foreach my $key (keys %channel_scale_para_1)
+	{
+		if ($channel_scale_para_1{$key} eq $channel1_scale)
+		{
+			$channel1_offset_step = ($key / 25);
+#			$channel1_offset_step = 0.002 if ($channel1_offset_step < 0.002);
+#			$channel1_offset_step = 5 if ($channel1_offset_step > 5);
+			last;
+		}
+	}
+	# En base al valor de la escala estan definidos los limites
+	# para el offset vertical (ver pag. 31 del manual de programacion).
+	my $volts_por_division_1 = str2sci_v($channel1_scale);
+
+	# No es posible setear los valores limite para el offset vertical,
+	# descriptos en la pag. 31. Si se puede llegar al valor anterior, (un
+	# paso menos que los limites). Bug del firmware del instrumento?.
+
+	my $channel1_offset_down = $channel1_offset - $channel1_offset_step;
+	my $channel1_offset_up = $channel1_offset + $channel1_offset_step;
+	if ($volts_por_division_1 >= 0.002 && $volts_por_division_1 <= 0.05)
+	{
+		if ($channel1_offset_up == 0.5)
+		{
+			$channel1_offset_up = $channel1_offset;
+		}
+		elsif ($channel1_offset_down == -0.5)
+		{
+			$channel1_offset_down = $channel1_offset;
+		}
+	}
+	elsif ($volts_por_division_1 >= 0.1 && $volts_por_division_1 <= 0.5)
+	{
+		if ($channel1_offset_up == 5)
+		{
+			$channel1_offset_up = $channel1_offset;
+		}
+		elsif ($channel1_offset_down == -5)
+		{
+			$channel1_offset_down = $channel1_offset;
+		}
+	}
+	elsif ($volts_por_division_1 >= 1 && $volts_por_division_1 <= 5)
+	{
+		if ($channel1_offset_up == 50)
+		{
+			$channel1_offset_up = $channel1_offset;
+		}
+		elsif ($channel1_offset_down == -50)
+		{
+			$channel1_offset_down = $channel1_offset;
+		}
+	}
+
+	$channel1_offset_down = sci2str_v($channel1_offset_down);
+	$channel1_offset_up = sci2str_v($channel1_offset_up);
+
+	##################################################
+	### $channel2_offset_up, $channel2_offset_down ###
+	##################################################
+	print STDERR "CHANNEL2_OFFSET: $channel2_offset \n";
+	print STDERR "CHANNEL2_SCALE: $channel2_scale \n";
+	$channel2_offset = str2sci_v($channel2_offset);
+	# En base al valor de la cantidad de volts por division, es que
+	# se define el valor del paso de la posicion vertical del osciloscopio
+	# El valor del paso es la 25ava. parte de la cantidad de volts/div.
+	foreach my $key (keys %channel_scale_para_2)
+	{
+		if ($channel_scale_para_2{$key} eq $channel2_scale)
+		{
+			$channel2_offset_step = ($key / 25);
+#			$channel2_offset_step = 0.002 if ($channel2_offset_step < 0.002);
+#			$channel2_offset_step = 5 if ($channel2_offset_step > 5);
+			last;
+		}
+	}
+	# En base al valor de la escala estan definidos los limites
+	# para el offset vertical (ver pag. 31 del manual de programacion).
+	my $volts_por_division_2 = str2sci_v($channel2_scale);
+
+	# No es posible setear los valores limite para el offset vertical,
+	# descriptos en la pag. 31. Si se puede llegar al valor anterior, (un
+	# paso menos que los limites). Bug del firmware del instrumento?.
+
+	my $channel2_offset_down = $channel2_offset - $channel2_offset_step;
+	my $channel2_offset_up = $channel2_offset + $channel2_offset_step;
+	if ($volts_por_division_2 >= 0.002 && $volts_por_division_2 <= 0.05)
+	{
+		if ($channel2_offset_up == 0.5)
+		{
+			$channel2_offset_up = $channel2_offset;
+		}
+		elsif ($channel2_offset_down == -0.5)
+		{
+			$channel2_offset_down = $channel2_offset;
+		}
+	}
+	elsif ($volts_por_division_2 >= 0.1 && $volts_por_division_2 <= 0.5)
+	{
+		if ($channel2_offset_up == 5)
+		{
+			$channel2_offset_up = $channel2_offset;
+		}
+		elsif ($channel2_offset_down == -5)
+		{
+			$channel2_offset_down = $channel2_offset;
+		}
+	}
+	elsif ($volts_por_division_2 >= 1 && $volts_por_division_2 <= 5)
+	{
+		if ($channel2_offset_up == 50)
+		{
+			$channel2_offset_up = $channel2_offset;
+		}
+		elsif ($channel2_offset_down == -50)
+		{
+			$channel2_offset_down = $channel2_offset;
+		}
+	}
+
+	$channel2_offset_down = sci2str_v($channel2_offset_down);
+	$channel2_offset_up = sci2str_v($channel2_offset_up);
+
+	###################################################
+	### $timebase_delay_right, $timebase_delay_left ###
+	###################################################
+	# El valor del paso de la posicion horizontal del osciloscopio
+	# esta definido como la 25ava. parte de la escala de tiempo. 
+	foreach my $key (keys %timebase_scale)
+	{
+		if (($timebase_scale{$key}) eq $timebase_scale)
+		{
+			$timebase_delay_step = ($key / 25);
+			last;
+		}
+	}
+	# Convierte el valor de tiempo a segundos.
+	$timebase_delay = str2sci($timebase_delay);
+	my $timebase_delay_right = sprintf("%e", $timebase_delay - $timebase_delay_step);
+	$timebase_delay_right = sci2str($timebase_delay_right);
+	my $timebase_delay_left = sprintf("%e", $timebase_delay + $timebase_delay_step);
+	$timebase_delay_left = sci2str($timebase_delay_left);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	#####################################
+	###                               ###
+	### GENERA FRENTE DEL INSTRUMENTO ###
+	###                               ###
+	#####################################
+
+	$template = HTML::Template->new(filename=>'control.tmpl', path=>$tmpldir);
+	########################
+	### genera la imagen ###
+	########################
+	print STDERR "CURSOR_EN_INDEX: $cursor_source \n";
+	my $datafile = &generar_imagen($mostrar{0}, $mostrar{1}, $mostrar{2}, $volts_por_division_1, $channel1_offset, $volts_por_division_2, $channel2_offset, $cursor_source, $cursor_x1position, $cursor_x2position, $cursor_y1position, $cursor_y2position, "", "");
+	$template->param(imgfile => $datafile);
+
+	$template->param(mostrar_channel_1 => $mostrar{0});
+	$template->param(mostrar_channel_2 => $mostrar{1});
+	$template->param(mostrar_cursors => $mostrar{2});
+
+	############
+	### show ###
+	############
+	@registro = ();
+	foreach my $key (keys %show)
+	{
+		my %row;
+		my $show_opcion_elegida = 0;
+
+		$show_opcion_elegida = 1 if ($mostrar{$key} == 1);
+
+		$row{show_opcion_elegida} = $show_opcion_elegida;
+		$row{show_key} = $key;
+		$row{show} = $show{$key};
+		push(@registro, \%row);
+	}
+	$template->param(show_loop => \@registro);
+
+	#####################
+	### modify_cursor ###
+	#####################
+	@registro = ();
+	foreach my $modify (keys %modify_cursor)
+	{
+		my %row;
+		my $modify_cursor_opcion_elegida = 0;
+
+		$modify_cursor_opcion_elegida = 1 if ($modify eq $modify_cursor);
+
+		$row{modify_cursor_opcion_elegida} = $modify_cursor_opcion_elegida;
+		$row{modify_cursor_key} = $modify;
+		$row{modify_cursor} = $modify_cursor{$modify};
+		push(@registro, \%row);
+	}
+	$template->param(modify_cursor_loop => \@registro);
+
+	#####################
+	### cursor_source ###
+	#####################
+	@registro = ();
+	foreach my $source (keys %cursor_source)
+	{
+		my %row;
+		my $cursor_source_opcion_elegida = 0;
+
+		$cursor_source_opcion_elegida = 1 if ($source eq $cursor_source);
+
+		$row{cursor_source_opcion_elegida} = $cursor_source_opcion_elegida;
+		$row{cursor_source_key} = $source;
+		$row{cursor_source} = $cursor_source{$source};
+		push(@registro, \%row);
+	}
+	$template->param(cursor_source_loop => \@registro);
+
+	############################
+	### cursor summary_table ###
+	############################
+	$source_es_math = 1 if (($cursor_source{$cursor_source}) eq 'Math');
+	$template->param(source_es_math => $source_es_math);
+	$template->param(cursor_x1position => $cursor_x1position_v);
+	$template->param(cursor_x2position => $cursor_x2position_v);
+	$template->param(cursor_xdelta => $cursor_xdelta);
+	$template->param(cursor_y1position => $cursor_y1position_v);
+	$template->param(cursor_y2position => $cursor_y2position_v);
+	$template->param(cursor_ydelta => $cursor_ydelta);
+
+	#####################
+	### summary_table ###
+	#####################
+	$template->param(show_vmax => $config{show_vmax});
+	$template->param(show_vmin => $config{show_vmin});
+	$template->param(show_vpp => $config{show_vpp});
+	$template->param(show_vavg => $config{show_vavg});
+	$template->param(show_vrms => $config{show_vrms});
+	$template->param(show_vhi => $config{show_vhi});
+	$template->param(show_vlo => $config{show_vlo});
+	$template->param(show_vamp => $config{show_vamp});
+	$template->param(show_freq => $config{show_freq});
+	$template->param(show_period => $config{show_period});
+	$template->param(show_rise => $config{show_rise});
+	$template->param(show_fall => $config{show_fall});
+	$template->param(show_pwidth => $config{show_pwidth});
+	$template->param(show_nwidth => $config{show_nwidth});
+	$template->param(show_pduty => $config{show_pduty});
+	$template->param(measure_vmax_1 => $measure_vmax_1);
+	$template->param(measure_vmin_1 => $measure_vmin_1);
+	$template->param(measure_vpp_1 => $measure_vpp_1);
+	$template->param(measure_vavg_1 => $measure_vavg_1);
+	$template->param(measure_vrms_1 => $measure_vrms_1);
+	$template->param(measure_vhi_1 => $measure_vhi_1);
+	$template->param(measure_vlo_1 => $measure_vlo_1);
+	$template->param(measure_vamp_1 => $measure_vamp_1);
+	$template->param(measure_freq_1 => $measure_freq_1);
+	$template->param(measure_period_1 => $measure_period_1);
+	$template->param(measure_rise_1 => $measure_rise_1);
+	$template->param(measure_fall_1 => $measure_fall_1);
+	$template->param(measure_pwidth_1 => $measure_pwidth_1);
+	$template->param(measure_nwidth_1 => $measure_nwidth_1);
+	$template->param(measure_pduty_1 => $measure_pduty_1);
+	$template->param(measure_vmax_2 => $measure_vmax_2);
+	$template->param(measure_vmin_2 => $measure_vmin_2);
+	$template->param(measure_vpp_2 => $measure_vpp_2);
+	$template->param(measure_vavg_2 => $measure_vavg_2);
+	$template->param(measure_vrms_2 => $measure_vrms_2);
+	$template->param(measure_vhi_2 => $measure_vhi_2);
+	$template->param(measure_vlo_2 => $measure_vlo_2);
+	$template->param(measure_vamp_2 => $measure_vamp_2);
+	$template->param(measure_freq_2 => $measure_freq_2);
+	$template->param(measure_period_2 => $measure_period_2);
+	$template->param(measure_rise_2 => $measure_rise_2);
+	$template->param(measure_fall_2 => $measure_fall_2);
+	$template->param(measure_pwidth_2 => $measure_pwidth_2);
+	$template->param(measure_nwidth_2 => $measure_nwidth_2);
+	$template->param(measure_pduty_2 => $measure_pduty_2);
+
+	######################
+	### channel1_probe ###
+	######################
+	@registro = ();
+	foreach my $channel_probe (keys %channel_probe)
+	{
+		my %row;
+		my $channel1_probe_opcion_elegida = 0;
+
+		$channel1_probe_opcion_elegida = 1 if ($channel_probe eq $channel1_probe);
+
+		$row{channel1_probe_opcion_elegida} = $channel1_probe_opcion_elegida;
+		$row{channel1_probe_key} = $channel_probe;
+		$row{channel1_probe} = $channel_probe{$channel_probe};
+		push(@registro, \%row);
+	}
+	$template->param(channel1_probe_loop => \@registro);
+
+	######################
+	### channel2_probe ###
+	######################
+	@registro = ();
+	foreach my $channel_probe (keys %channel_probe)
+	{
+		my %row;
+		my $channel2_probe_opcion_elegida = 0;
+
+		$channel2_probe_opcion_elegida = 1 if ($channel_probe eq $channel2_probe);
+
+		$row{channel2_probe_opcion_elegida} = $channel2_probe_opcion_elegida;
+		$row{channel2_probe_key} = $channel_probe;
+		$row{channel2_probe} = $channel_probe{$channel_probe};
+		push(@registro, \%row);
+	}
+	$template->param(channel2_probe_loop => \@registro);
+
+	#########################
+	### channel1_coupling ###
+	#########################
+	@registro = ();
+	foreach my $channel_coupling (keys %channel_coupling)
+	{
+		my %row;
+		my $channel1_coupling_opcion_elegida = 0;
+
+		$channel1_coupling_opcion_elegida = 1 if ($channel_coupling eq $channel1_coupling);
+
+		$row{channel1_coupling_opcion_elegida} = $channel1_coupling_opcion_elegida;
+		$row{channel1_coupling_key} = $channel_coupling;
+		$row{channel1_coupling} = $channel_coupling{$channel_coupling};
+		push(@registro, \%row);
+	}
+	$template->param(channel1_coupling_loop => \@registro);
+
+	#########################
+	### channel2_coupling ###
+	#########################
+	@registro = ();
+	foreach my $channel_coupling (keys %channel_coupling)
+	{
+		my %row;
+		my $channel2_coupling_opcion_elegida = 0;
+
+		$channel2_coupling_opcion_elegida = 1 if ($channel_coupling eq $channel2_coupling);
+
+		$row{channel2_coupling_opcion_elegida} = $channel2_coupling_opcion_elegida;
+		$row{channel2_coupling_key} = $channel_coupling;
+		$row{channel2_coupling} = $channel_coupling{$channel_coupling};
+		push(@registro, \%row);
+	}
+	$template->param(channel2_coupling_loop => \@registro);
+
+	########################
+	### channel1_bwlimit ###
+	########################
+	@registro = ();
+	foreach my $channel_bwlimit (keys %channel_bwlimit)
+	{
+		my %row;
+		my $channel1_bwlimit_opcion_elegida = 0;
+
+		$channel1_bwlimit_opcion_elegida = 1 if ($channel_bwlimit eq $channel1_bwlimit);
+
+		$row{channel1_bwlimit_opcion_elegida} = $channel1_bwlimit_opcion_elegida;
+		$row{channel1_bwlimit_key} = $channel_bwlimit;
+		$row{channel1_bwlimit} = $channel_bwlimit{$channel_bwlimit};
+		push(@registro, \%row);
+	}
+	$template->param(channel1_bwlimit_loop => \@registro);
+
+	########################
+	### channel2_bwlimit ###
+	########################
+	@registro = ();
+	foreach my $channel_bwlimit (keys %channel_bwlimit)
+	{
+		my %row;
+		my $channel2_bwlimit_opcion_elegida = 0;
+
+		$channel2_bwlimit_opcion_elegida = 1 if ($channel_bwlimit eq $channel2_bwlimit);
+
+		$row{channel2_bwlimit_opcion_elegida} = $channel2_bwlimit_opcion_elegida;
+		$row{channel2_bwlimit_key} = $channel_bwlimit;
+		$row{channel2_bwlimit} = $channel_bwlimit{$channel_bwlimit};
+		push(@registro, \%row);
+	}
+	$template->param(channel2_bwlimit_loop => \@registro);
+
+	#######################
+	### channel1_invert ###
+	#######################
+	@registro = ();
+	foreach my $channel_invert (keys %channel_invert)
+	{
+		my %row;
+		my $channel1_invert_opcion_elegida = 0;
+
+		$channel1_invert_opcion_elegida = 1 if ($channel_invert eq $channel1_invert);
+
+		$row{channel1_invert_opcion_elegida} = $channel1_invert_opcion_elegida;
+		$row{channel1_invert_key} = $channel_invert;
+		$row{channel1_invert} = $channel_invert{$channel_invert};
+		push(@registro, \%row);
+	}
+	$template->param(channel1_invert_loop => \@registro);
+
+	#######################
+	### channel2_invert ###
+	#######################
+	@registro = ();
+	foreach my $channel_invert (keys %channel_invert)
+	{
+		my %row;
+		my $channel2_invert_opcion_elegida = 0;
+
+		$channel2_invert_opcion_elegida = 1 if ($channel_invert eq $channel2_invert);
+
+		$row{channel2_invert_opcion_elegida} = $channel2_invert_opcion_elegida;
+		$row{channel2_invert_key} = $channel_invert;
+		$row{channel2_invert} = $channel_invert{$channel_invert};
+		push(@registro, \%row);
+	}
+	$template->param(channel2_invert_loop => \@registro);
+
+	#######################
+	### channel1_offset ###
+	#######################
+	$channel1_offset = &sci2str_v($channel1_offset);
+	$template->param(channel1_offset => $channel1_offset);
+	$template->param(channel1_offset_up => $channel1_offset_up);
+	$template->param(channel1_offset_down => $channel1_offset_down);
+
+	#######################
+	### channel2_offset ###
+	#######################
+	$channel2_offset = &sci2str_v($channel2_offset);
+	$template->param(channel2_offset => $channel2_offset);
+	$template->param(channel2_offset_up => $channel2_offset_up);
+	$template->param(channel2_offset_down => $channel2_offset_down);
+
+	######################
+	### channel1_scale ###
+	######################
+	@registro = ();
+	foreach my $channel_scale (keys %channel_scale_para_1)
+	{
+		my %row;
+		my $channel1_scale_opcion_elegida = 0;
+
+		$channel1_scale_opcion_elegida = 1 if ($channel_scale_para_1{$channel_scale} eq $channel1_scale);
+
+		$row{channel1_scale_opcion_elegida} = $channel1_scale_opcion_elegida;
+		$row{channel1_scale} = $channel_scale_para_1{$channel_scale};
+		push(@registro, \%row);
+	}
+	$template->param(channel1_scale_loop => \@registro);
+
+	######################
+	### channel2_scale ###
+	######################
+	@registro = ();
+	foreach my $channel_scale (keys %channel_scale_para_2)
+	{
+		my %row;
+		my $channel2_scale_opcion_elegida = 0;
+
+		$channel2_scale_opcion_elegida = 1 if ($channel_scale_para_2{$channel_scale} eq $channel2_scale);
+
+		$row{channel2_scale_opcion_elegida} = $channel2_scale_opcion_elegida;
+		$row{channel2_scale} = $channel_scale_para_2{$channel_scale};
+		push(@registro, \%row);
+	}
+	$template->param(channel2_scale_loop => \@registro);
+
+	######################
+	### timebase_delay ###
+	######################
+	my $timebase_delay = sprintf("%e", $timebase_delay);
+	$timebase_delay = &sci2str($timebase_delay);
+	$template->param(timebase_delay => $timebase_delay);
+	$template->param(timebase_delay_left => $timebase_delay_left);
+	$template->param(timebase_delay_right => $timebase_delay_right);
+
+	######################
+	### timebase_scale ###
+	######################
+	@registro = ();
+	foreach my $timebase (keys %timebase_scale)
+	{
+		my %row;
+		my $timebase_scale_opcion_elegida = 0;
+
+		$timebase_scale_opcion_elegida = 1 if ($timebase_scale{$timebase} eq $timebase_scale);
+
+		$row{timebase_scale_opcion_elegida} = $timebase_scale_opcion_elegida;
+		$row{timebase_scale} = $timebase_scale{$timebase};
+		push(@registro, \%row);
+	}
+	$template->param(timebase_scale_loop => \@registro);
+
+	#################################
+	### imprime pagina de control ###
+	#################################
+	print $template->output;
+
+
+
+
+
+
+
+
+
+}
+else
+{
+	print header();
+	print $template->output;
+	$template = HTML::Template->new(filename => 'index.tmpl', path => $tmpldir);
+	print $template->output;
+}
+
+$template = HTML::Template->new(filename => 'footer.tmpl', path => $tmpldir);
+
+my $usar_link_pagina_principal = 0;
+$template->param(usar_link_pagina_principal => $usar_link_pagina_principal);
+
+print $template->output;
+
+exit(0);
+
+
+
+sub escribir_cursor
+{
+	my $cursor = $_[0];
+	open (CURSOR, "> /var/gds820/temp/cursor");
+	print CURSOR $cursor,"\n";
+	close (CURSOR);
+}
+
+
+sub leer_cursor
+{
+	my $cursor = "1";
+	open (CURSOR, "< /var/gds820/temp/cursor");
+	$cursor = <CURSOR>;
+	chomp($cursor);
+	close (CURSOR);
+	return $cursor;
+}
+
+
